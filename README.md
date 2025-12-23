@@ -1,1 +1,3 @@
-# stridex
+# StrideX
+
+Plan my running workouts

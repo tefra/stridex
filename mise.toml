@@ -1,0 +1,9 @@
+[tools]
+node = "24"
+
+
+[tasks.bootstrap]
+run = ["mise install", "npm install"]
+
+[tasks.start]
+run = "npm run dev"
