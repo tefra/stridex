@@ -11,6 +11,8 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
+import Week from "@/Components/Week";
+
 const App = (): React.ReactElement => {
   const [opened, { toggle }] = useDisclosure();
 
@@ -38,7 +40,9 @@ const App = (): React.ReactElement => {
           </Group>
         </AppShell.Section>
       </AppShell.Navbar>
-      <AppShell.Main />
+      <AppShell.Main>
+        <Week />
+      </AppShell.Main>
     </AppShell>
   );
 };
