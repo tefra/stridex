@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { DateTime } from "luxon";
 
-import WorkoutView from "@/Components/Workout";
+import Workouts from "@/Components/Workouts";
 
 const Week: React.FC = () => {
   const monday = DateTime.now().startOf("week");
@@ -20,7 +20,7 @@ const Week: React.FC = () => {
   );
 
   return (
-    <div>
+    <Group>
       <Center>
         <Title mb="lg" order={2}>
           Week of {monday.toLocaleString(DateTime.DATE_MED)}
@@ -28,10 +28,10 @@ const Week: React.FC = () => {
       </Center>
       <SimpleGrid cols={{ base: 1, xs: 2, sm: 3, md: 4, lg: 7 }} spacing="md">
         {days.map((day) => {
-          const key = day.toISODate() as string;
+          const date = day.toISODate() as string;
           return (
             <Card
-              key={key}
+              key={date}
               withBorder
               padding="sm"
               radius="md"
@@ -47,14 +47,13 @@ const Week: React.FC = () => {
                     {day.toLocaleString({ day: "2-digit" })}
                   </Text>
                 </Group>
-                <WorkoutView day={key} />
+                <Workouts date={date} />
               </Stack>
             </Card>
           );
         })}
-        ;
       </SimpleGrid>
-    </div>
+    </Group>
   );
 };
 

@@ -81,6 +81,11 @@ export default [
     rules: {
       // No file extensions in imports
       "import-x/extensions": ["error", "never", { fix: true }],
+      // Immer
+      "no-param-reassign": [
+        "error",
+        { ignorePropertyModificationsFor: ["draft"] },
+      ],
     },
   },
 ];
