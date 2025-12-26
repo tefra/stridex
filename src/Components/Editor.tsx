@@ -15,11 +15,10 @@ import {
 } from "@mantine/core";
 import { TimePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
-import { randomId } from "@mantine/hooks";
 import { IconPlus, IconX } from "@tabler/icons-react";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 
-import { PaceSchema, WorkoutSchema } from "@/schemas";
+import { PACE_OPTIONS, WorkoutSchema } from "@/schemas";
 import useWorkoutStore from "@/store";
 import { formatDurationDisplay, parseDurationInput } from "@/utils";
 
@@ -31,8 +30,6 @@ interface EditorProps {
   workout: Workout;
   onComplete: () => void;
 }
-
-const paceOptions = PaceSchema.options;
 
 const Editor: React.FC<EditorProps> = ({
   date,
@@ -51,7 +48,7 @@ const Editor: React.FC<EditorProps> = ({
 
   const addStep = () => {
     form.insertListItem("steps", {
-      type: "easy",
+      pace: "easy",
       durationValue: 5,
       durationUnit: "km",
       repetitions: 1,
@@ -75,7 +72,8 @@ const Editor: React.FC<EditorProps> = ({
     <Stack gap="lg">
       <Stack gap="md">
         {form.values.steps.map((step, index) => (
-          <Fieldset key={randomId()} legend={`Step ${index + 1}`} radius="sm">
+          // eslint-disable-next-line react/no-array-index-key
+          <Fieldset key={index} legend={`Step ${index + 1}`} radius="sm">
             <Grid align="end" gutter="md">
               <Grid.Col span={6}>
                 <Input.Wrapper label="Duration">
@@ -136,9 +134,9 @@ const Editor: React.FC<EditorProps> = ({
               <Grid.Col span={4}>
                 <Select
                   allowDeselect={false}
-                  data={paceOptions}
-                  label="Type"
-                  {...form.getInputProps(`steps.${index}.type`)}
+                  data={PACE_OPTIONS}
+                  label="Pace"
+                  {...form.getInputProps(`steps.${index}.pace`)}
                 />
               </Grid.Col>
               <Grid.Col span={2}>

@@ -19,7 +19,7 @@ const App = (): React.ReactElement => {
   return (
     <AppShell
       header={{ height: 60 }}
-      navbar={{ width: 200, breakpoint: "sm", collapsed: { mobile: !opened } }}
+      navbar={{ width: 160, breakpoint: "sm", collapsed: { mobile: !opened } }}
       padding="md"
     >
       <AppShell.Header>
