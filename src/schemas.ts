@@ -11,7 +11,7 @@ export const PACES = [
   "cooldown",
 ] as const;
 
-export const Durations = ["sec", "mi", "km", "m"];
+export const Durations = ["sec", "km", "m"];
 
 export const PaceType = {
   warmup: {
