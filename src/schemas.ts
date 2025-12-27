@@ -1,47 +1,73 @@
 import { z } from "zod";
 
-export const PACES = {
-  warmup: { label: "Warm-Up", abbr: "WU" },
-  easy: { label: "Easy", abbr: "E" },
-  base: { label: "Base", abbr: "B" },
-  tempo: { label: "Tempo", abbr: "T" },
-  subthreshold: { label: "Sub-Threshold", abbr: "ST" },
-  threshold: { label: "Threshold", abbr: "TH" },
-  sprint: { label: "Sprint", abbr: "S" },
-  cooldown: { label: "Cool-Down", abbr: "CD" },
+export const PACES = [
+  "warmup",
+  "easy",
+  "base",
+  "tempo",
+  "subthreshold",
+  "threshold",
+  "sprint",
+  "cooldown",
+] as const;
+
+export const Durations = ["sec", "mi", "km", "m"];
+
+export const PaceType = {
+  warmup: {
+    label: "Warm-Up",
+    color: "blue.6",
+  },
+  easy: {
+    label: "Easy",
+    color: "cyan.6",
+  },
+  base: {
+    label: "Base",
+    color: "teal.6",
+  },
+  tempo: {
+    label: "Tempo",
+    color: "orange.6",
+  },
+  subthreshold: {
+    label: "Sub-Threshold",
+    color: "yellow.6",
+  },
+  threshold: {
+    label: "Threshold",
+    color: "pink.7",
+  },
+  sprint: {
+    label: "Sprint",
+    color: "red.7",
+  },
+  cooldown: {
+    label: "Cool-Down",
+    color: "indigo.6",
+  },
 } as const;
 
-export const DURATIONS = {
+export const DurationType = {
   sec: { type: "time", label: "Seconds" },
   mi: { type: "distance", label: "Miles" },
   km: { type: "distance", label: "Kilometers" },
   m: { type: "distance", label: "Meters" },
 };
 
-export const DISTANCE_OPTIONS = Object.entries(DURATIONS)
-  .filter(([, { type }]) => type === "distance")
-  .map(([value, { label }]) => ({
-    value,
-    label,
-  }));
-
-export const PACE_OPTIONS = Object.entries(PACES).map(([value, info]) => ({
+export const PACE_OPTIONS = Object.entries(PaceType).map(([value, info]) => ({
   value,
   label: info.label,
 }));
 
-export const PaceSchema = z.enum(Object.keys(PACES));
-
-export const DurationUnitSchema = z.enum(Object.keys(DURATIONS));
-
 export const StepSchema = z
   .object({
-    pace: PaceSchema,
+    pace: z.enum(PACES),
     durationValue: z.number().positive("Duration value must be positive"),
-    durationUnit: DurationUnitSchema,
+    durationUnit: z.enum(Durations),
     repetitions: z.number().int().min(1, "At least 1 repetition"),
     recoveryValue: z.number().min(0, "Recovery value must be a positive"),
-    recoveryUnit: DurationUnitSchema.clone().nullish(),
+    recoveryUnit: z.enum(Durations),
     skipLastRecovery: z.boolean().optional(),
   })
   .refine(
@@ -60,6 +86,7 @@ export const StepSchema = z
 
 export const WorkoutSchema = z.object({
   id: z.string(),
+  description: z.string().nonoptional(),
   steps: z.array(StepSchema).min(1, "Workout must have at least one step"),
 });
 

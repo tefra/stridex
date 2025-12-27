@@ -12,9 +12,12 @@ import {
   Select,
   Stack,
   Switch,
+  TextInput,
 } from "@mantine/core";
 import { TimePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
+import { randomId } from "@mantine/hooks";
+import { modals } from "@mantine/modals";
 import { IconPlus, IconX } from "@tabler/icons-react";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 
@@ -31,7 +34,7 @@ interface EditorProps {
   onComplete: () => void;
 }
 
-const Editor: React.FC<EditorProps> = ({
+export const Editor: React.FC<EditorProps> = ({
   date,
   editing,
   workout,
@@ -71,6 +74,12 @@ const Editor: React.FC<EditorProps> = ({
   return (
     <Stack gap="lg">
       <Stack gap="md">
+        <TextInput
+          required
+          label="Description"
+          {...form.getInputProps(`description`)}
+        />
+
         {form.values.steps.map((step, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <Fieldset key={index} legend={`Step ${index + 1}`} radius="sm">
@@ -255,4 +264,23 @@ const Editor: React.FC<EditorProps> = ({
   );
 };
 
-export default Editor;
+export const openEditor = (date: string, workout: Workout | null): void => {
+  modals.open({
+    title: workout ? "Edit Workout" : "New Workout",
+    size: "xl",
+    children: (
+      <Editor
+        date={date}
+        editing={!!workout}
+        onComplete={() => modals.closeAll()}
+        workout={
+          workout ?? {
+            id: randomId("workout"),
+            description: "",
+            steps: [],
+          }
+        }
+      />
+    ),
+  });
+};

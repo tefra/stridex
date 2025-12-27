@@ -1,47 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 
-import {
-  AppShell,
-  Burger,
-  Group,
-  NavLink,
-  ScrollArea,
-  Text,
-  Title,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { AppShell, Group, Text, Title } from "@mantine/core";
+import { MonthPicker } from "@mantine/dates";
+import { modals } from "@mantine/modals";
+import dayjs from "dayjs";
 
-import Week from "@/Components/Week";
+import Calendar from "@/Components/Calendar";
+
+import type { Dayjs } from "dayjs";
 
 const App = (): React.ReactElement => {
-  const [opened, { toggle }] = useDisclosure();
+  const [currentDateTime, setCurrentDateTime] = useState<Dayjs>(dayjs());
+  const openMonthPicker = () => {
+    modals.open({
+      withCloseButton: false,
+      size: "auto",
+      children: (
+        <MonthPicker
+          allowDeselect={false}
+          value={currentDateTime.toDate()}
+          onChange={(value) => {
+            if (value) {
+              setCurrentDateTime(dayjs(value));
+              modals.closeAll();
+            }
+          }}
+        />
+      ),
+    });
+  };
 
   return (
-    <AppShell
-      header={{ height: 60 }}
-      navbar={{ width: 160, breakpoint: "sm", collapsed: { mobile: !opened } }}
-      padding="md"
-    >
+    <AppShell header={{ height: 60 }} padding="md">
       <AppShell.Header>
-        <Group h="100%" px="sm">
-          <Burger hiddenFrom="sm" onClick={toggle} opened={opened} size="sm" />
-          <Title>StrideX</Title>
+        <Group h="100%" px="md">
+          <Group justify="space-between" style={{ flex: 1 }}>
+            <Title>StrideX</Title>
+            <Group gap={0} ml="xl" visibleFrom="sm">
+              <Text fw={700} onClick={openMonthPicker} size="md">
+                {currentDateTime.format("MMMM YYYY")}
+              </Text>
+            </Group>
+          </Group>
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar>
-        <AppShell.Section grow component={ScrollArea} my="md" px="md">
-          <NavLink href="#" label="Navbar link" />
-        </AppShell.Section>
-        <AppShell.Section p="md">
-          <Group>
-            <Text c="dimmed" mt="xl" size="sm" ta="center">
-              Plan your strides
-            </Text>
-          </Group>
-        </AppShell.Section>
-      </AppShell.Navbar>
       <AppShell.Main>
-        <Week />
+        <Calendar
+          month={currentDateTime.month()}
+          year={currentDateTime.year()}
+        />
       </AppShell.Main>
     </AppShell>
   );

@@ -1,11 +1,10 @@
 import React from "react";
 
-import { ActionIcon, Group, Stack, Text } from "@mantine/core";
-import { randomId } from "@mantine/hooks";
-import { modals } from "@mantine/modals";
-import { IconPlus } from "@tabler/icons-react";
+import { ActionIcon, Group, Menu, Stack, Text, Tooltip } from "@mantine/core";
+import { IconDots, IconEdit, IconTrash, IconZzz } from "@tabler/icons-react";
 
-import Editor from "@/Components/Editor";
+import { openEditor } from "@/Components/Editor";
+import { PaceType } from "@/schemas";
 import useWorkoutStore from "@/store";
 
 import type { Workout } from "@/schemas";
@@ -15,30 +14,31 @@ interface WorkoutsProps {
 }
 
 const Workouts: React.FC<WorkoutsProps> = ({ date }) => {
-  const { getWorkouts } = useWorkoutStore();
+  const { getWorkouts, deleteWorkout } = useWorkoutStore();
   const workouts = getWorkouts(date);
+  const getMainStep = (workout: Workout) => {
+    const paceIntensityOrder = [
+      "sprint",
+      "threshold",
+      "subthreshold",
+      "tempo",
+      "base",
+      "easy",
+      "cooldown",
+      "warmup",
+    ] as const;
 
-  const openEditor = (workout: Workout | null) => {
-    modals.open({
-      title: workout ? "Edit Workout" : "New Workout",
-      size: "xl",
-      children: (
-        <Editor
-          date={date}
-          editing={workout !== null}
-          onComplete={() => modals.closeAll()}
-          workout={workout ?? { id: randomId("workout"), steps: [] }}
-        />
-      ),
+    return workout.steps.reduce((primary, step) => {
+      const currentIntensity = paceIntensityOrder.indexOf(step.pace);
+      const primaryIntensity = paceIntensityOrder.indexOf(primary.pace);
+      return currentIntensity < primaryIntensity ? step : primary;
     });
   };
 
-  const formatWorkout = (workout: Workout): string => {
-    if (workout.steps.length === 0) return "Empty workout";
-
-    return workout.steps
+  const formatWorkout = (workout: Workout): string =>
+    workout.steps
       .map((step) => {
-        const pace = step.type.charAt(0).toUpperCase() + step.type.slice(1);
+        const pace = PaceType[step.pace].label;
 
         if (step.repetitions === 1) {
           return `${pace} ${step.durationValue}${step.durationUnit}`;
@@ -55,32 +55,61 @@ const Workouts: React.FC<WorkoutsProps> = ({ date }) => {
         return repStr;
       })
       .join(" + ");
-  };
 
   return (
-    <Stack gap="xs">
-      {workouts.length === 0 ? (
-        <Text c="dimmed" size="sm">
-          No workouts yet
-        </Text>
-      ) : (
-        workouts.map((workout) => (
-          <Text
-            key={workout.id}
-            onClick={() => openEditor(workout)}
-            size="sm"
-            style={{ cursor: "pointer" }}
-          >
-            • {formatWorkout(workout)}
-          </Text>
-        ))
-      )}
+    <Stack gap={0} style={{ width: "100%" }}>
+      {workouts.map((workout) => {
+        const mainStep = getMainStep(workout);
+        const paceInfo = PaceType[mainStep.pace];
 
-      <Group justify="flex-end" mt="xs">
-        <ActionIcon onClick={() => openEditor(null)} size="sm" variant="light">
-          <IconPlus size={16} />
-        </ActionIcon>
-      </Group>
+        return (
+          <Group key={workout.id} justify="space-between">
+            <Tooltip withArrow label={formatWorkout(workout)}>
+              <Text c={paceInfo.color} fw={700} size="sm">
+                {workout.description}
+              </Text>
+            </Tooltip>
+
+            <Menu shadow="md" width={200}>
+              <Menu.Target>
+                <ActionIcon
+                  color="gray"
+                  onClick={(e) => e.stopPropagation()}
+                  size="sm"
+                  variant="subtle"
+                >
+                  <IconDots size={16} />
+                </ActionIcon>
+              </Menu.Target>
+
+              <Menu.Dropdown>
+                <Menu.Item
+                  leftSection={<IconEdit size={16} />}
+                  onClick={() => openEditor(date, workout)}
+                >
+                  Edit
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconEdit size={16} />}
+                  onClick={() => openEditor(date, workout)}
+                >
+                  Copy to
+                </Menu.Item>
+                <Menu.Divider />
+
+                <Menu.Item
+                  color="red"
+                  leftSection={<IconTrash size={16} />}
+                  onClick={() => deleteWorkout(date, workout.id)}
+                >
+                  Delete
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </Group>
+        );
+      })}
+      {workouts.length === 0 && <IconZzz size={16} />}
     </Stack>
   );
 };
