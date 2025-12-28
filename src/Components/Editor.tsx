@@ -83,180 +83,161 @@ export const Editor: React.FC<EditorProps> = ({
   };
 
   return (
-    <Stack gap="lg">
-      <Stack gap="md">
-        <TextInput
-          required
-          label="Description"
-          {...form.getInputProps(`description`)}
-          rightSection={
-            <Tooltip label="Generate">
-              <ActionIcon onClick={generateDescription} variant="subtle">
-                <IconWand size={16} />
-              </ActionIcon>
-            </Tooltip>
-          }
-        />
-
-        {form.values.steps.map((step, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <Fieldset key={index} legend={`Step ${index + 1}`} radius="sm">
-            <Grid align="end" gutter="md">
-              <Grid.Col span={6}>
-                <Input.Wrapper label="Duration">
-                  <Group grow align="start" gap="xs">
-                    <SegmentedControl
-                      size="sm"
-                      value={step.durationUnit === "sec" ? "time" : "distance"}
-                      data={[
-                        { label: "Time", value: "time" },
-                        { label: "Distance", value: "distance" },
-                      ]}
+    <Stack gap="sm">
+      {form.values.steps.map((step, index) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <Fieldset key={index} legend={`Step ${index + 1}`} radius="sm">
+          <Grid align="end" gutter="md">
+            <Grid.Col span={6}>
+              <Input.Wrapper label="Duration">
+                <Group grow align="start" gap="xs">
+                  <SegmentedControl
+                    size="sm"
+                    value={step.durationUnit === "sec" ? "time" : "distance"}
+                    data={[
+                      { label: "Time", value: "time" },
+                      { label: "Distance", value: "distance" },
+                    ]}
+                    onChange={(value) => {
+                      form.setFieldValue(
+                        `steps.${index}.durationUnit`,
+                        value === "time" ? "sec" : "km"
+                      );
+                      form.setFieldValue(
+                        `steps.${index}.durationValue`,
+                        value === "time" ? 2700 : 10
+                      );
+                    }}
+                  />
+                  {step.durationUnit === "sec" ? (
+                    <TimePicker
+                      clearable
+                      withDropdown
+                      withSeconds
+                      hoursStep={1}
+                      minutesStep={5}
+                      secondsStep={5}
+                      value={formatDurationDisplay(step.durationValue)}
                       onChange={(value) => {
-                        form.setFieldValue(
-                          `steps.${index}.durationUnit`,
-                          value === "time" ? "sec" : "km"
-                        );
+                        const seconds = parseDurationInput(value);
                         form.setFieldValue(
                           `steps.${index}.durationValue`,
-                          value === "time" ? 2700 : 10
+                          seconds
                         );
                       }}
                     />
-                    {step.durationUnit === "sec" ? (
-                      <TimePicker
-                        clearable
-                        withDropdown
-                        withSeconds
-                        hoursStep={1}
-                        minutesStep={5}
-                        secondsStep={5}
-                        value={formatDurationDisplay(step.durationValue)}
-                        onChange={(value) => {
-                          const seconds = parseDurationInput(value);
-                          form.setFieldValue(
-                            `steps.${index}.durationValue`,
-                            seconds
-                          );
-                        }}
+                  ) : (
+                    <Group grow align="end" gap="xs">
+                      <NumberInput
+                        min={0.01}
+                        step={1.0}
+                        {...form.getInputProps(`steps.${index}.durationValue`)}
                       />
-                    ) : (
-                      <Group grow align="end" gap="xs">
-                        <NumberInput
-                          min={0.01}
-                          step={0.1}
-                          {...form.getInputProps(
-                            `steps.${index}.durationValue`
-                          )}
-                        />
-                        <Select
-                          data={["mi", "km", "m"]}
-                          {...form.getInputProps(`steps.${index}.durationUnit`)}
-                        />
-                      </Group>
-                    )}
-                  </Group>
-                </Input.Wrapper>
-              </Grid.Col>
-              <Grid.Col span={4}>
-                <Select
-                  allowDeselect={false}
-                  data={PACE_OPTIONS}
-                  label="Pace"
-                  {...form.getInputProps(`steps.${index}.pace`)}
-                />
-              </Grid.Col>
-              <Grid.Col span={2}>
-                <NumberInput
-                  label="Reps"
-                  min={1}
-                  {...form.getInputProps(`steps.${index}.repetitions`)}
-                />
-              </Grid.Col>
-            </Grid>
-            <Grid align="end" gutter="md">
-              <Grid.Col span={6}>
-                <Input.Wrapper label="Recovery">
-                  <Group grow align="start" gap="xs">
-                    <SegmentedControl
-                      size="sm"
-                      value={step.recoveryUnit === "sec" ? "time" : "distance"}
-                      data={[
-                        { label: "Time", value: "time" },
-                        { label: "Distance", value: "distance" },
-                      ]}
+                      <Select
+                        data={["mi", "km", "m"]}
+                        {...form.getInputProps(`steps.${index}.durationUnit`)}
+                      />
+                    </Group>
+                  )}
+                </Group>
+              </Input.Wrapper>
+            </Grid.Col>
+            <Grid.Col span={4}>
+              <Select
+                allowDeselect={false}
+                data={PACE_OPTIONS}
+                label="Pace"
+                {...form.getInputProps(`steps.${index}.pace`)}
+              />
+            </Grid.Col>
+            <Grid.Col span={2}>
+              <NumberInput
+                label="Reps"
+                min={1}
+                {...form.getInputProps(`steps.${index}.repetitions`)}
+              />
+            </Grid.Col>
+          </Grid>
+          <Grid align="end" gutter="md">
+            <Grid.Col span={6}>
+              <Input.Wrapper label="Recovery">
+                <Group grow align="start" gap="xs">
+                  <SegmentedControl
+                    size="sm"
+                    value={step.recoveryUnit === "sec" ? "time" : "distance"}
+                    data={[
+                      { label: "Time", value: "time" },
+                      { label: "Distance", value: "distance" },
+                    ]}
+                    onChange={(value) => {
+                      form.setFieldValue(
+                        `steps.${index}.recoveryUnit`,
+                        value === "time" ? "sec" : "km"
+                      );
+                      form.setFieldValue(
+                        `steps.${index}.recoveryValue`,
+                        value === "time" ? 60 : 1
+                      );
+                    }}
+                  />
+                  {step.recoveryUnit === "sec" ? (
+                    <TimePicker
+                      clearable
+                      withDropdown
+                      withSeconds
+                      hoursStep={1}
+                      minutesStep={1}
+                      secondsStep={5}
+                      value={formatDurationDisplay(step.recoveryValue)}
                       onChange={(value) => {
-                        form.setFieldValue(
-                          `steps.${index}.recoveryUnit`,
-                          value === "time" ? "sec" : "km"
-                        );
+                        const seconds = parseDurationInput(value);
                         form.setFieldValue(
                           `steps.${index}.recoveryValue`,
-                          value === "time" ? 60 : 1
+                          seconds
                         );
                       }}
                     />
-                    {step.recoveryUnit === "sec" ? (
-                      <TimePicker
-                        clearable
-                        withDropdown
-                        withSeconds
-                        hoursStep={1}
-                        minutesStep={1}
-                        secondsStep={5}
-                        value={formatDurationDisplay(step.recoveryValue)}
-                        onChange={(value) => {
-                          const seconds = parseDurationInput(value);
-                          form.setFieldValue(
-                            `steps.${index}.recoveryValue`,
-                            seconds
-                          );
-                        }}
+                  ) : (
+                    <Group grow align="end" gap="xs">
+                      <NumberInput
+                        min={0.01}
+                        step={0.1}
+                        {...form.getInputProps(`steps.${index}.recoveryValue`)}
                       />
-                    ) : (
-                      <Group grow align="end" gap="xs">
-                        <NumberInput
-                          min={0.01}
-                          step={0.1}
-                          {...form.getInputProps(
-                            `steps.${index}.recoveryValue`
-                          )}
-                        />
-                        <Select
-                          data={["mi", "km", "m"]}
-                          {...form.getInputProps(`steps.${index}.recoveryUnit`)}
-                        />
-                      </Group>
-                    )}
-                  </Group>
-                </Input.Wrapper>
-              </Grid.Col>
-              <Grid.Col span={4}>
-                <Switch
-                  disabled={step.repetitions === 1}
-                  label="Skip last recovery"
-                  mb={5}
-                  {...form.getInputProps(`steps.${index}.skipLastRecovery`, {
-                    type: "checkbox",
-                  })}
-                />
-              </Grid.Col>
-              <Grid.Col span={2}>
-                <Group align="end" h="100%" justify="flex-end">
-                  <ActionIcon
-                    color="red"
-                    onClick={() => form.removeListItem("steps", index)}
-                    size="sm"
-                    variant="subtle"
-                  >
-                    <IconX size={20} />
-                  </ActionIcon>
+                      <Select
+                        data={["mi", "km", "m"]}
+                        {...form.getInputProps(`steps.${index}.recoveryUnit`)}
+                      />
+                    </Group>
+                  )}
                 </Group>
-              </Grid.Col>
-            </Grid>
-          </Fieldset>
-        ))}
-      </Stack>
+              </Input.Wrapper>
+            </Grid.Col>
+            <Grid.Col span={4}>
+              <Switch
+                disabled={step.repetitions === 1}
+                label="Skip last recovery"
+                mb={5}
+                {...form.getInputProps(`steps.${index}.skipLastRecovery`, {
+                  type: "checkbox",
+                })}
+              />
+            </Grid.Col>
+            <Grid.Col span={2}>
+              <Group align="end" h="100%" justify="flex-end">
+                <ActionIcon
+                  color="red"
+                  onClick={() => form.removeListItem("steps", index)}
+                  size="sm"
+                  variant="subtle"
+                >
+                  <IconX size={20} />
+                </ActionIcon>
+              </Group>
+            </Grid.Col>
+          </Grid>
+        </Fieldset>
+      ))}
       <Button
         fullWidth
         leftSection={<IconPlus size={14} />}
@@ -265,6 +246,18 @@ export const Editor: React.FC<EditorProps> = ({
       >
         Add Step
       </Button>
+      <TextInput
+        required
+        label="Description"
+        {...form.getInputProps(`description`)}
+        rightSection={
+          <Tooltip label="Generate">
+            <ActionIcon onClick={generateDescription} variant="subtle">
+              <IconWand size={16} />
+            </ActionIcon>
+          </Tooltip>
+        }
+      />
       <Group justify="flex-end" mt="xl">
         <Button onClick={onComplete} variant="default">
           Cancel
