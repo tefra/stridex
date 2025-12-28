@@ -15,7 +15,7 @@ if (!root) {
 
 createRoot(root).render(
   <React.StrictMode>
-    <MantineProvider>
+    <MantineProvider defaultColorScheme="auto">
       <ModalsProvider>
         <App />
       </ModalsProvider>

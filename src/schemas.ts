@@ -27,34 +27,42 @@ export const Durations = ["sec", "km", "m"];
 export const PaceType = {
   warmup: {
     label: "Warm-Up",
+    abbr: "WU",
     color: "blue.6",
   },
   easy: {
     label: "Easy",
+    abbr: "EZ",
     color: "cyan.6",
   },
   base: {
     label: "Base",
+    abbr: "B",
     color: "teal.6",
   },
   tempo: {
     label: "Tempo",
+    abbr: "T",
     color: "orange.6",
   },
   subthreshold: {
     label: "Sub-Threshold",
+    abbr: "ST",
     color: "yellow.6",
   },
   threshold: {
     label: "Threshold",
+    abbr: "TH",
     color: "pink.7",
   },
   sprint: {
     label: "Sprint",
+    abbr: "S",
     color: "red.7",
   },
   cooldown: {
     label: "Cool-Down",
+    abbr: "CD",
     color: "indigo.6",
   },
 } as const;

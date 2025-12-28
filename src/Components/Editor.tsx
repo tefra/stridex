@@ -78,7 +78,7 @@ export const Editor: React.FC<EditorProps> = ({
 
   const generateDescription = () => {
     const step = workoutMainStep(form.values);
-    const description = stepShorthand(step);
+    const description = stepShorthand(step, true, true);
     form.setFieldValue("description", description);
   };
 

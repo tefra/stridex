@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useDroppable } from "@dnd-kit/core";
-import { Box, Paper, Text } from "@mantine/core";
+import { Box, Paper, Text, Tooltip } from "@mantine/core";
 
 import { openEditor } from "@/Components/Editor";
 import Workouts from "@/Components/Workouts";
@@ -33,24 +33,31 @@ const Day: React.FC<Props> = ({ date, current }) => {
         minHeight: 120,
         display: "flex",
         flexDirection: "column",
-        backgroundColor: isOver ? "var(--mantine-color-blue-1)" : undefined,
         borderStyle: isOver ? "dashed" : "solid",
         borderColor: isOver ? "var(--mantine-color-blue-6)" : undefined,
         transition: "background-color 0.2s, border 0.2s",
       }}
     >
-      <Text
-        c={isWeekend ? "red" : "gray"}
-        fw={700}
-        onClick={() => openEditor(key, null)}
-        size="md"
-        style={{ cursor: "pointer" }}
-        ta="right"
-      >
-        {date.date()}
-      </Text>
+      <Tooltip withArrow label="Click to add a workout">
+        <Text
+          c={isWeekend ? "red" : "default"}
+          fw={700}
+          onClick={() => openEditor(key, null)}
+          size="md"
+          style={{ cursor: "pointer" }}
+          ta="right"
+        >
+          {date.date()}
+        </Text>
+      </Tooltip>
       <Box mt="auto" pt="sm">
-        <Workouts date={key} />
+        {isOver ? (
+          <Text c="blue.2" fw={700} size="md" ta="center">
+            Drop to copy
+          </Text>
+        ) : (
+          <Workouts date={key} />
+        )}
       </Box>
     </Paper>
   );

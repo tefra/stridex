@@ -19,7 +19,14 @@ const ActiveWorkout: React.FC = () => {
   const mainStepInfo = PaceType[mainStep.pace];
 
   return (
-    <Group justify="flex-start">
+    <Group
+      gap={0}
+      justify="flex-start"
+      style={{
+        flexWrap: "nowrap",
+        width: "100%",
+      }}
+    >
       <IconGripVertical
         size="14"
         style={{
@@ -27,9 +34,10 @@ const ActiveWorkout: React.FC = () => {
           outline: "none",
           marginRight: "1",
           opacity: "0.7",
+          flexShrink: 0,
         }}
       />
-      <Text c={mainStepInfo.color} fw={700} size="sm">
+      <Text c={mainStepInfo.color} fw={700} size="sm" truncate="end">
         {workout.description}
       </Text>
     </Group>

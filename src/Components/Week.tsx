@@ -67,12 +67,11 @@ const Week: React.FC<Props> = ({ days, month, year }) => {
           alignItems: "center",
           display: "flex",
           justifyContent: "flex-end",
-          backgroundColor: "var(--mantine-color-gray-0)",
         }}
       >
         <Box pr="md">
           <Group align="center" justify="space-between">
-            <Text c="gray.7" fw={600} size="sm">
+            <Text fw={600} size="sm">
               Total:
             </Text>
             <Text c="blue" fw={700} size="sm">
@@ -80,7 +79,7 @@ const Week: React.FC<Props> = ({ days, month, year }) => {
             </Text>
           </Group>
           <Group align="center" justify="space-between">
-            <Text c="gray.7" fw={600} size="sm">
+            <Text fw={600} size="sm">
               Easy:
             </Text>
             <Text c="cyan" fw={700} size="sm">
@@ -88,7 +87,7 @@ const Week: React.FC<Props> = ({ days, month, year }) => {
             </Text>
           </Group>
           <Group align="center" justify="space-between">
-            <Text c="gray.7" fw={600} size="sm">
+            <Text fw={600} size="sm">
               Speed:
             </Text>
             <Text c="orange" fw={700} size="sm">
@@ -96,7 +95,7 @@ const Week: React.FC<Props> = ({ days, month, year }) => {
             </Text>
           </Group>
           <Group align="center" justify="space-between">
-            <Text c="gray.7" fw={600} size="sm">
+            <Text fw={600} size="sm">
               Ratio:
             </Text>
             <Text

@@ -26,15 +26,20 @@ export const formatDurationDisplay = (seconds: number): string => {
     .padStart(2, "0")}`;
 };
 
-export const stepShorthand = (step: Step): string => {
-  const pace = PaceType[step.pace].label;
+export const stepShorthand = (
+  step: Step,
+  useAbbrevations = false,
+  skipRest = false
+): string => {
+  const paceType = PaceType[step.pace];
+  const pace = useAbbrevations ? paceType.abbr : paceType.label;
 
   if (step.repetitions === 1) {
     return `${pace} ${step.durationValue}${step.durationUnit}`;
   }
 
   let repStr = `${step.repetitions}×${step.durationValue}${step.durationUnit} @ ${pace}`;
-  if (step.recoveryValue && step.recoveryValue > 0) {
+  if (!skipRest && step.recoveryValue && step.recoveryValue > 0) {
     const skip = step.skipLastRecovery ? " (skip last)" : "";
     repStr += ` [${step.recoveryValue}${step.recoveryUnit}${skip}]`;
   }

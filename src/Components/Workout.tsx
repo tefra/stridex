@@ -30,14 +30,19 @@ const WorkoutItem: React.FC<Props> = ({ date, workout }) => {
     id: workout.id,
     data: { type: "workout", date, workout },
   });
-  const style = {
-    transform: CSS.Translate.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
 
   return (
-    <Group ref={setNodeRef} gap={0} justify="flex-start" style={style}>
+    <Group
+      ref={setNodeRef}
+      gap={0}
+      justify="flex-start"
+      style={{
+        transform: CSS.Translate.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        flexWrap: "nowrap",
+      }}
+    >
       <IconGripVertical
         size="14"
         style={{
@@ -45,6 +50,7 @@ const WorkoutItem: React.FC<Props> = ({ date, workout }) => {
           outline: "none",
           marginRight: "1",
           opacity: "0.7",
+          flexShrink: 0,
         }}
         {...listeners}
         {...attributes}
@@ -56,6 +62,7 @@ const WorkoutItem: React.FC<Props> = ({ date, workout }) => {
           onClick={() => openEditor(date, workout)}
           size="sm"
           style={{ cursor: "pointer" }}
+          truncate="end"
         >
           {workout.description}
         </Text>
