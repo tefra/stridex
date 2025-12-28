@@ -97,7 +97,7 @@ export const StepSchema = z
 
 export const WorkoutSchema = z.object({
   id: z.string(),
-  description: z.string().nonoptional(),
+  description: z.string().trim().min(1, "Workout description is required"),
   steps: z.array(StepSchema).min(1, "Workout must have at least one step"),
 });
 
