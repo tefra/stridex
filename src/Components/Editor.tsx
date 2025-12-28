@@ -13,17 +13,23 @@ import {
   Stack,
   Switch,
   TextInput,
+  Tooltip,
 } from "@mantine/core";
 import { TimePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { randomId } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
-import { IconPlus, IconX } from "@tabler/icons-react";
+import { IconPlus, IconWand, IconX } from "@tabler/icons-react";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 
 import { PACE_OPTIONS, WorkoutSchema } from "@/schemas";
 import useWorkoutStore from "@/store";
-import { formatDurationDisplay, parseDurationInput } from "@/utils";
+import {
+  formatDurationDisplay,
+  parseDurationInput,
+  stepShorthand,
+  workoutMainStep,
+} from "@/utils";
 
 import type { Workout } from "@/schemas";
 
@@ -71,6 +77,12 @@ export const Editor: React.FC<EditorProps> = ({
     onComplete();
   };
 
+  const generateDescription = () => {
+    const step = workoutMainStep(form.values);
+    const description = stepShorthand(step);
+    form.setFieldValue("description", description);
+  };
+
   return (
     <Stack gap="lg">
       <Stack gap="md">
@@ -78,6 +90,13 @@ export const Editor: React.FC<EditorProps> = ({
           required
           label="Description"
           {...form.getInputProps(`description`)}
+          rightSection={
+            <Tooltip label="Generate">
+              <ActionIcon onClick={generateDescription} variant="subtle">
+                <IconWand size={16} />
+              </ActionIcon>
+            </Tooltip>
+          }
         />
 
         {form.values.steps.map((step, index) => (

@@ -11,6 +11,17 @@ export const PACES = [
   "cooldown",
 ] as const;
 
+export const paceIntensityOrder = [
+  "sprint",
+  "threshold",
+  "subthreshold",
+  "tempo",
+  "base",
+  "easy",
+  "cooldown",
+  "warmup",
+] as const;
+
 export const Durations = ["sec", "km", "m"];
 
 export const PaceType = {
