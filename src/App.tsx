@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 
-import { AppShell, Group, Text, Title } from "@mantine/core";
+import { ActionIcon, AppShell, Group, Text, Title } from "@mantine/core";
 import { MonthPicker } from "@mantine/dates";
 import { modals } from "@mantine/modals";
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import dayjs from "dayjs";
 
 import Month from "@/Components/Month";
@@ -15,9 +16,11 @@ const App = (): React.ReactElement => {
     modals.open({
       withCloseButton: false,
       size: "auto",
+      key: currentDateTime.format("YYYY-MM"),
       children: (
         <MonthPicker
           allowDeselect={false}
+          date={currentDateTime.toDate()}
           value={currentDateTime.toDate()}
           onChange={(value) => {
             if (value) {
@@ -30,6 +33,14 @@ const App = (): React.ReactElement => {
     });
   };
 
+  const goToPreviousMonth = () => {
+    setCurrentDateTime((prev) => prev.subtract(1, "month"));
+  };
+
+  const goToNextMonth = () => {
+    setCurrentDateTime((prev) => prev.add(1, "month"));
+  };
+
   return (
     <AppShell header={{ height: 60 }} padding="md">
       <AppShell.Header>
@@ -37,9 +48,25 @@ const App = (): React.ReactElement => {
           <Group justify="space-between" style={{ flex: 1 }}>
             <Title>StrideX</Title>
             <Group gap={0} ml="xl" visibleFrom="sm">
+              <ActionIcon
+                color="gray"
+                onClick={goToPreviousMonth}
+                size="md"
+                variant="subtle"
+              >
+                <IconChevronLeft size={18} />
+              </ActionIcon>
               <Text fw={700} onClick={openMonthPicker} size="md">
-                {currentDateTime.format("MMMM YYYY")}
+                {currentDateTime.format("MMM YYYY")}
               </Text>
+              <ActionIcon
+                color="gray"
+                onClick={goToNextMonth}
+                size="md"
+                variant="subtle"
+              >
+                <IconChevronRight size={18} />
+              </ActionIcon>
             </Group>
           </Group>
         </Group>
