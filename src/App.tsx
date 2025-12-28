@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 
-import { ActionIcon, AppShell, Group, Text, Title } from "@mantine/core";
+import {
+  ActionIcon,
+  Anchor,
+  AppShell,
+  Group,
+  Text,
+  Title,
+} from "@mantine/core";
 import { MonthPicker } from "@mantine/dates";
 import { modals } from "@mantine/modals";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
@@ -42,7 +49,7 @@ const App = (): React.ReactElement => {
   };
 
   return (
-    <AppShell header={{ height: 60 }} padding="md">
+    <AppShell footer={{ height: 30 }} header={{ height: 60 }} padding="md">
       <AppShell.Header>
         <Group h="100%" px="md">
           <Group justify="space-between" style={{ flex: 1 }}>
@@ -74,6 +81,22 @@ const App = (): React.ReactElement => {
       <AppShell.Main>
         <Month month={currentDateTime.month()} year={currentDateTime.year()} />
       </AppShell.Main>
+      <AppShell.Footer ta="center">
+        <Group align="center" h="100%" justify="center" px="md">
+          <Text c="dimmed" size="xs">
+            Plan your strides ×{" "}
+            <Anchor
+              c="dimmed"
+              href="https://github.com/tefra/stridex"
+              rel="noopener noreferrer"
+              size="xs"
+              target="_blank"
+            >
+              tefra/stridex
+            </Anchor>
+          </Text>
+        </Group>
+      </AppShell.Footer>
     </AppShell>
   );
 };
