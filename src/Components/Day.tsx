@@ -16,7 +16,10 @@ interface Props {
 const Day: React.FC<Props> = ({ date, current }) => {
   const key = date.format("YYYY-MM-DD");
   const isWeekend = date.day() === 0 || date.day() === 6;
-  const { setNodeRef, isOver } = useDroppable({ id: key });
+  const { setNodeRef, isOver } = useDroppable({
+    id: key,
+    data: { type: "week" },
+  });
 
   return (
     <Paper

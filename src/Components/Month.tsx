@@ -67,8 +67,9 @@ const Month: React.FC<Props> = ({ month, year }) => {
     const sourceDate = active.data.current?.date as string;
     const sourceId = active.id as string;
     const targetId = over.id as string;
+    const targetType = over.data.current?.type as string;
 
-    if (targetId.startsWith(year.toString())) {
+    if (targetType === "week") {
       saveWorkout(targetId, { ...sourceWorkout, id: "" });
     } else {
       reorderWorkouts(sourceDate, sourceId, targetId);

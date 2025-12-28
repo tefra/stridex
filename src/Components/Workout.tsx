@@ -28,7 +28,7 @@ const WorkoutItem: React.FC<Props> = ({ date, workout }) => {
     transition,
   } = useSortable({
     id: workout.id,
-    data: { date, workout },
+    data: { type: "workout", date, workout },
   });
   const style = {
     transform: CSS.Translate.toString(transform),
