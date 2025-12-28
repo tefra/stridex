@@ -5,7 +5,7 @@ import { MonthPicker } from "@mantine/dates";
 import { modals } from "@mantine/modals";
 import dayjs from "dayjs";
 
-import Calendar from "@/Components/Calendar";
+import Month from "@/Components/Month";
 
 import type { Dayjs } from "dayjs";
 
@@ -45,10 +45,7 @@ const App = (): React.ReactElement => {
         </Group>
       </AppShell.Header>
       <AppShell.Main>
-        <Calendar
-          month={currentDateTime.month()}
-          year={currentDateTime.year()}
-        />
+        <Month month={currentDateTime.month()} year={currentDateTime.year()} />
       </AppShell.Main>
     </AppShell>
   );
