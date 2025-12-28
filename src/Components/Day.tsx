@@ -30,10 +30,10 @@ const Day: React.FC<Props> = ({ date, current }) => {
         minHeight: 120,
         display: "flex",
         flexDirection: "column",
-        backgroundColor: isOver ? "var(--mantine-color-blue-1)" : undefined, // Light blue when hovered
-        borderStyle: isOver ? "dashed" : "solid", // Dashed border on hover
-        borderColor: isOver ? "var(--mantine-color-blue-6)" : undefined, // Blue border on hover
-        transition: "background-color 0.2s, border 0.2s", // Smooth transition
+        backgroundColor: isOver ? "var(--mantine-color-blue-1)" : undefined,
+        borderStyle: isOver ? "dashed" : "solid",
+        borderColor: isOver ? "var(--mantine-color-blue-6)" : undefined,
+        transition: "background-color 0.2s, border 0.2s",
       }}
     >
       <Text

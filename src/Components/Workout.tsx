@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useDraggable } from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Group, Text, Tooltip } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
@@ -19,13 +19,20 @@ interface Props {
 const WorkoutItem: React.FC<Props> = ({ date, workout }) => {
   const mainStep = workoutMainStep(workout);
   const mainStepInfo = PaceType[mainStep.pace];
-  const { attributes, listeners, setNodeRef, isDragging, transform } =
-    useDraggable({
-      id: `${date}-${workout.id}`,
-      data: { date, workout },
-    });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    isDragging,
+    transform,
+    transition,
+  } = useSortable({
+    id: workout.id,
+    data: { date, workout },
+  });
   const style = {
     transform: CSS.Translate.toString(transform),
+    transition,
     opacity: isDragging ? 0.5 : 1,
   };
 

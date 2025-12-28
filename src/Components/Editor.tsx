@@ -17,7 +17,6 @@ import {
 } from "@mantine/core";
 import { TimePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
-import { randomId } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
 import { IconPlus, IconWand, IconX } from "@tabler/icons-react";
 import { zod4Resolver } from "mantine-form-zod-resolver";
@@ -294,7 +293,7 @@ export const openEditor = (date: string, workout: Workout | null): void => {
         onComplete={() => modals.closeAll()}
         workout={
           workout ?? {
-            id: randomId("workout"),
+            id: "",
             description: "",
             steps: [],
           }

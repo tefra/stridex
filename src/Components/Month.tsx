@@ -1,17 +1,19 @@
 import React, { useMemo } from "react";
 
-import { DndContext } from "@dnd-kit/core";
+import { closestCorners, DndContext, DragOverlay } from "@dnd-kit/core";
 import { Box, SimpleGrid, Text } from "@mantine/core";
-import { randomId } from "@mantine/hooks";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import weekday from "dayjs/plugin/weekday";
 
+import ActiveWorkout from "@/Components/ActiveWorkout";
 import Week from "@/Components/Week";
 import useWorkoutStore from "@/store";
 
 import type { DragEndEvent } from "@dnd-kit/core";
 import type { Dayjs } from "dayjs";
+
+import type { Workout } from "@/schemas";
 
 dayjs.extend(weekday);
 dayjs.extend(isoWeek);
@@ -22,7 +24,7 @@ interface Props {
 }
 
 const Month: React.FC<Props> = ({ month, year }) => {
-  const { saveWorkout } = useWorkoutStore();
+  const { saveWorkout, reorderWorkouts } = useWorkoutStore();
   const calendarDays = useMemo(() => {
     const startOfMonth = dayjs().year(year).month(month).date(1);
     const endOfMonth = startOfMonth.endOf("month");
@@ -57,20 +59,23 @@ const Month: React.FC<Props> = ({ month, year }) => {
     "Total",
   ];
 
-  const copyWorkout = (event: DragEndEvent): void => {
+  const onDragEnd = (event: DragEndEvent): void => {
     const { active, over } = event;
-    if (!over || !active.data.current) return;
+    if (!over || !active) return;
 
-    if (over.id === active.data.current.date) return;
+    const sourceWorkout = active.data.current?.workout as Workout;
+    const sourceDate = active.data.current?.date as string;
+    const sourceId = active.id as string;
+    const targetId = over.id as string;
 
-    saveWorkout(over.id as string, {
-      id: randomId("workout"),
-      ...active.data.current.workout,
-    });
+    if (targetId.startsWith(year.toString())) {
+      saveWorkout(targetId, { ...sourceWorkout, id: "" });
+    } else {
+      reorderWorkouts(sourceDate, sourceId, targetId);
+    }
   };
-
   return (
-    <DndContext onDragEnd={copyWorkout}>
+    <DndContext collisionDetection={closestCorners} onDragEnd={onDragEnd}>
       <Box p={0}>
         <SimpleGrid cols={8} mb="xs" spacing="xs">
           {weekdayNames.map((name, index) => (
@@ -90,6 +95,9 @@ const Month: React.FC<Props> = ({ month, year }) => {
           <Week key={week[0].isoWeek()} days={week} month={month} year={year} />
         ))}
       </Box>
+      <DragOverlay>
+        <ActiveWorkout />
+      </DragOverlay>
     </DndContext>
   );
 };
