@@ -1,5 +1,6 @@
 import React from "react";
 
+import { useDroppable } from "@dnd-kit/core";
 import { Box, Paper, Text } from "@mantine/core";
 
 import { openEditor } from "@/Components/Editor";
@@ -15,10 +16,12 @@ interface Props {
 const Day: React.FC<Props> = ({ date, current }) => {
   const key = date.format("YYYY-MM-DD");
   const isWeekend = date.day() === 0 || date.day() === 6;
+  const { setNodeRef, isOver } = useDroppable({ id: key });
 
   return (
     <Paper
       key={key}
+      ref={setNodeRef}
       withBorder
       p="sm"
       radius="md"
@@ -27,6 +30,10 @@ const Day: React.FC<Props> = ({ date, current }) => {
         minHeight: 120,
         display: "flex",
         flexDirection: "column",
+        backgroundColor: isOver ? "var(--mantine-color-blue-1)" : undefined, // Light blue when hovered
+        borderStyle: isOver ? "dashed" : "solid", // Dashed border on hover
+        borderColor: isOver ? "var(--mantine-color-blue-6)" : undefined, // Blue border on hover
+        transition: "background-color 0.2s, border 0.2s", // Smooth transition
       }}
     >
       <Text

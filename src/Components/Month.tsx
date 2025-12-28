@@ -1,12 +1,16 @@
 import React, { useMemo } from "react";
 
+import { DndContext } from "@dnd-kit/core";
 import { Box, SimpleGrid, Text } from "@mantine/core";
+import { randomId } from "@mantine/hooks";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import weekday from "dayjs/plugin/weekday";
 
 import Week from "@/Components/Week";
+import useWorkoutStore from "@/store";
 
+import type { DragEndEvent } from "@dnd-kit/core";
 import type { Dayjs } from "dayjs";
 
 dayjs.extend(weekday);
@@ -18,6 +22,7 @@ interface Props {
 }
 
 const Month: React.FC<Props> = ({ month, year }) => {
+  const { saveWorkout } = useWorkoutStore();
   const calendarDays = useMemo(() => {
     const startOfMonth = dayjs().year(year).month(month).date(1);
     const endOfMonth = startOfMonth.endOf("month");
@@ -52,26 +57,40 @@ const Month: React.FC<Props> = ({ month, year }) => {
     "Total",
   ];
 
+  const copyWorkout = (event: DragEndEvent): void => {
+    const { active, over } = event;
+    if (!over || !active.data.current) return;
+
+    if (over.id === active.data.current.date) return;
+
+    saveWorkout(over.id as string, {
+      id: randomId("workout"),
+      ...active.data.current.workout,
+    });
+  };
+
   return (
-    <Box p={0}>
-      <SimpleGrid cols={8} mb="xs" spacing="xs">
-        {weekdayNames.map((name, index) => (
-          <Text
-            key={name}
-            c="dimmed"
-            fw={index === 7 ? 700 : 600}
-            pr={index === 7 ? "md" : 0}
-            size="sm"
-            ta={index === 7 ? "right" : "center"}
-          >
-            {name}
-          </Text>
+    <DndContext onDragEnd={copyWorkout}>
+      <Box p={0}>
+        <SimpleGrid cols={8} mb="xs" spacing="xs">
+          {weekdayNames.map((name, index) => (
+            <Text
+              key={name}
+              c="dimmed"
+              fw={index === 7 ? 700 : 600}
+              pr={index === 7 ? "md" : 0}
+              size="sm"
+              ta={index === 7 ? "right" : "center"}
+            >
+              {name}
+            </Text>
+          ))}
+        </SimpleGrid>
+        {weeks.map((week) => (
+          <Week key={week[0].isoWeek()} days={week} month={month} year={year} />
         ))}
-      </SimpleGrid>
-      {weeks.map((week) => (
-        <Week key={week[0].isoWeek()} days={week} month={month} year={year} />
-      ))}
-    </Box>
+      </Box>
+    </DndContext>
   );
 };
 
