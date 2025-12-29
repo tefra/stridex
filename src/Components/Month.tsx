@@ -11,7 +11,6 @@ import Week from "@/Components/Week";
 import useWorkoutStore from "@/store";
 
 import type { DragEndEvent } from "@dnd-kit/core";
-import type { Dayjs } from "dayjs";
 
 import type { Workout } from "@/schemas";
 
@@ -25,28 +24,19 @@ interface Props {
 
 const Month: React.FC<Props> = ({ month, year }) => {
   const { saveWorkout, reorderWorkouts } = useWorkoutStore();
-  const calendarDays = useMemo(() => {
-    const startOfMonth = dayjs().year(year).month(month).date(1);
+
+  const mondays = useMemo(() => {
+    const startOfMonth = dayjs().year(year).month(month).startOf("month");
     const endOfMonth = startOfMonth.endOf("month");
+    let currentMonday = startOfMonth.startOf("isoWeek");
 
-    const startOfGrid = startOfMonth.isoWeekday(1);
-    const endOfGrid = endOfMonth.isoWeekday(7);
-    const days: Dayjs[] = [];
-    let current = startOfGrid;
-    while (current.isBefore(endOfGrid) || current.isSame(endOfGrid, "day")) {
-      days.push(current);
-      current = current.add(1, "day");
+    const weekStarts = [];
+    while (currentMonday.isBefore(endOfMonth)) {
+      weekStarts.push(currentMonday);
+      currentMonday = currentMonday.add(7, "day");
     }
-    return days;
+    return weekStarts;
   }, [year, month]);
-
-  const weeks = useMemo(() => {
-    const result: Dayjs[][] = [];
-    for (let i = 0; i < calendarDays.length; i += 7) {
-      result.push(calendarDays.slice(i, i + 7));
-    }
-    return result;
-  }, [calendarDays]);
 
   const weekdayNames = [
     "Monday",
@@ -92,8 +82,13 @@ const Month: React.FC<Props> = ({ month, year }) => {
             </Text>
           ))}
         </SimpleGrid>
-        {weeks.map((week) => (
-          <Week key={week[0].isoWeek()} days={week} month={month} year={year} />
+        {mondays.map((monday) => (
+          <Week
+            key={monday.toISOString()}
+            month={month}
+            startDay={monday}
+            year={year}
+          />
         ))}
       </Box>
       <DragOverlay>

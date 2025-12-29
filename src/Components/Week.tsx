@@ -3,51 +3,55 @@ import React from "react";
 import { Box, Group, Paper, SimpleGrid, Text } from "@mantine/core";
 
 import Day from "@/Components/Day";
-import useWorkoutStore from "@/store";
+import useStats from "@/hooks/useStats";
+import { calculatePercentDelta } from "@/utils";
 
 import type { Dayjs } from "dayjs";
 
 interface Props {
-  days: Dayjs[];
+  startDay: Dayjs;
   month: number;
   year: number;
 }
 
-const Week: React.FC<Props> = ({ days, month, year }) => {
-  const { getWorkouts } = useWorkoutStore();
+const Week: React.FC<Props> = ({ startDay, year, month }) => {
+  const days = Array.from({ length: 7 }, (_, i) => startDay.add(i, "day"));
+  const stats = useStats(days);
+  const previousStartDay = startDay.subtract(1, "week");
+  const previousWeekDays = Array.from({ length: 7 }, (_, i) =>
+    previousStartDay.add(i, "day")
+  );
+  const previousStats = useStats(previousWeekDays);
+  const delta = calculatePercentDelta(stats.total, previousStats.total);
 
-  let totalKm = 0;
-  let easyKm = 0;
-  let speedKm = 0;
-  const easyPaces = new Set(["easy", "warmup", "cooldown", "base"]);
-  const speedPaces = new Set(["tempo", "subthreshold", "threshold", "sprint"]);
-
-  days.forEach((day) => {
-    const dateStr = day.format("YYYY-MM-DD");
-    const workouts = getWorkouts(dateStr);
-
-    workouts.forEach((workout) => {
-      workout.steps.forEach((step) => {
-        let distanceKm = 0;
-        if (step.durationUnit === "km") {
-          distanceKm = step.durationValue * step.repetitions;
-        } else if (step.durationUnit === "m") {
-          distanceKm = (step.durationValue * step.repetitions) / 1000;
-        }
-
-        totalKm += distanceKm;
-        if (easyPaces.has(step.pace)) easyKm += distanceKm;
-        else if (speedPaces.has(step.pace)) speedKm += distanceKm;
-      });
-    });
-  });
-
-  const easyPercent = totalKm > 0 ? Math.round((easyKm / totalKm) * 100) : 0;
-  const speedPercent = totalKm > 0 ? Math.round((speedKm / totalKm) * 100) : 0;
-
-  const total = totalKm.toFixed(1);
-  const easy = easyKm.toFixed(1);
-  const speed = speedKm.toFixed(1);
+  const summaries = [
+    {
+      label: "Total",
+      value: `${stats.total.toFixed(1)}km`,
+      color: "indigo",
+    },
+    {
+      label: "Easy",
+      value: `${stats.easy.toFixed(1)}km`,
+      color: "teal",
+    },
+    {
+      label: "Speed",
+      value: `${stats.speed.toFixed(1)}km`,
+      color: "orange",
+    },
+    {
+      label: "Ratio",
+      value: `${stats.easyPercent.toFixed(0)}/${stats.speedPercent.toFixed(0)}`,
+      color: stats.easyPercent < 80 ? "yellow" : "green",
+    },
+    {
+      label: "Delta",
+      value: `${delta.toFixed(1)}%`,
+      color: delta >= 0 ? "lime" : "red",
+      badge: true,
+    },
+  ];
 
   return (
     <SimpleGrid cols={8} mb="lg" spacing="xs">
@@ -69,43 +73,21 @@ const Week: React.FC<Props> = ({ days, month, year }) => {
           justifyContent: "flex-end",
         }}
       >
-        <Box pr="md">
-          <Group align="center" justify="space-between">
-            <Text fw={600} size="sm">
-              Total:
-            </Text>
-            <Text c="blue" fw={700} size="sm">
-              {total} km
-            </Text>
-          </Group>
-          <Group align="center" justify="space-between">
-            <Text fw={600} size="sm">
-              Easy:
-            </Text>
-            <Text c="cyan" fw={700} size="sm">
-              {easy} km
-            </Text>
-          </Group>
-          <Group align="center" justify="space-between">
-            <Text fw={600} size="sm">
-              Speed:
-            </Text>
-            <Text c="orange" fw={700} size="sm">
-              {speed} km
-            </Text>
-          </Group>
-          <Group align="center" justify="space-between">
-            <Text fw={600} size="sm">
-              Ratio:
-            </Text>
-            <Text
-              c={easyPercent >= 80 ? "green.6" : "red.7"}
-              fw={700}
-              size="sm"
-            >
-              {easyPercent}/{speedPercent}
-            </Text>
-          </Group>
+        <Box>
+          {summaries.map((item) => (
+            <Group key={item.label} justify="space-between" wrap="nowrap">
+              <Text
+                fw={600}
+                size="sm"
+                style={{ minWidth: 50, textAlign: "right" }}
+              >
+                {item.label}:
+              </Text>
+              <Text c={item.color} fw={700} size="sm" ta="left">
+                {item.value}
+              </Text>
+            </Group>
+          ))}
         </Box>
       </Paper>
     </SimpleGrid>
