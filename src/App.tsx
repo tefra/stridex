@@ -24,7 +24,7 @@ import {
 import dayjs from "dayjs";
 
 import Month from "@/Components/Month";
-import useWorkoutStore from "@/store";
+import { fromJson, toJson } from "@/utils/localDataSync";
 
 import type { Dayjs } from "dayjs";
 
@@ -60,57 +60,6 @@ const App: React.FC = () => {
     setCurrentDateTime((prev) => prev.add(1, "month"));
   };
 
-  const exportData = () => {
-    const storageKey = "stridex-workouts";
-    const raw = localStorage.getItem(storageKey);
-    if (!raw) {
-      alert("No data found to export.");
-      return;
-    }
-
-    let data;
-    try {
-      data = JSON.parse(raw);
-    } catch (parseError) {
-      alert("Error reading saved data – it may be corrupted.");
-      console.error("Parse error:", parseError);
-      return;
-    }
-
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `stride-backup-${dayjs().format("YYYY-MM-DD")}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const importData = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".json";
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const data = JSON.parse(event.target?.result as string);
-          localStorage.setItem("stridex-workouts", JSON.stringify(data));
-          useWorkoutStore.persist.rehydrate();
-        } catch (err) {
-          alert("Invalid backup file");
-        }
-      };
-      reader.readAsText(file);
-    };
-    input.click();
-  };
-
   return (
     <AppShell footer={{ height: 30 }} header={{ height: 60 }} padding="md">
       <AppShell.Header>
@@ -120,12 +69,12 @@ const App: React.FC = () => {
 
             <Group align="center" gap="xs" ml="xl" visibleFrom="sm">
               <Tooltip label="Import backup">
-                <ActionIcon color="gray" onClick={importData} variant="subtle">
+                <ActionIcon color="gray" onClick={fromJson} variant="subtle">
                   <IconUpload size={20} />
                 </ActionIcon>
               </Tooltip>
               <Tooltip label="Export backup">
-                <ActionIcon color="gray" onClick={exportData} variant="subtle">
+                <ActionIcon color="gray" onClick={toJson} variant="subtle">
                   <IconDownload size={20} />
                 </ActionIcon>
               </Tooltip>

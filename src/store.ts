@@ -1,6 +1,7 @@
+import { del as idel, get as iget, set as iset } from "idb-keyval";
 import { v7 as uuid7 } from "uuid";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 import type { Workout } from "@/schemas";
@@ -65,6 +66,19 @@ const useWorkoutStore = create<WorkoutStore>()(
     })),
     {
       name: "stridex-workouts",
+      storage: createJSONStorage(() => ({
+        getItem: async (name) => {
+          const val = await iget(name);
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          return val ?? null;
+        },
+        setItem: async (name, value) => {
+          await iset(name, value);
+        },
+        removeItem: async (name) => {
+          await idel(name);
+        },
+      })),
     }
   )
 );
