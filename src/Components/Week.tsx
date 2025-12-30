@@ -4,7 +4,7 @@ import { Box, Group, Paper, SimpleGrid, Text } from "@mantine/core";
 
 import Day from "@/Components/Day";
 import useStats from "@/hooks/useStats";
-import { calculatePercentDelta } from "@/utils";
+import { calculatePercentDelta } from "@/utils/formatting";
 
 import type { Dayjs } from "dayjs";
 

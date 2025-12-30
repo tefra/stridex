@@ -7,7 +7,7 @@ import { IconGripVertical } from "@tabler/icons-react";
 
 import { openEditor } from "@/Components/Editor";
 import { PaceType } from "@/schemas";
-import { workoutMainStep, workoutShorthand } from "@/utils";
+import { workoutMainStep, workoutShorthand } from "@/utils/formatting";
 
 import type { Workout } from "@/schemas";
 

@@ -5,7 +5,7 @@ import { Group, Text } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
 
 import { PaceType } from "@/schemas";
-import { workoutMainStep } from "@/utils";
+import { workoutMainStep } from "@/utils/formatting";
 
 import type { Workout } from "@/schemas";
 

@@ -23,12 +23,8 @@ import { zod4Resolver } from "mantine-form-zod-resolver";
 
 import { PACE_OPTIONS, WorkoutSchema } from "@/schemas";
 import useWorkoutStore from "@/store";
-import {
-  formatDurationDisplay,
-  parseDurationInput,
-  stepShorthand,
-  workoutMainStep,
-} from "@/utils";
+import { stepShorthand, workoutMainStep } from "@/utils/formatting";
+import { formatDurationDisplay, parseDurationInput } from "@/utils/time";
 
 import type { Workout } from "@/schemas";
 
