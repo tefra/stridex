@@ -6,14 +6,19 @@ import { immer } from "zustand/middleware/immer";
 
 import type { Workout } from "@/schemas";
 
-interface WorkoutStore {
+interface WorkoutState {
   workoutsByDate: Record<string, Workout[]>;
+}
+
+interface WorkoutActions {
   getWorkout: (date: string, id: string) => Workout | undefined;
   getWorkouts: (date: string) => Workout[];
   saveWorkout: (date: string, workout: Workout) => void;
   deleteWorkout: (date: string, id: string) => void;
   reorderWorkouts: (date: string, activeId: string, overId: string) => void;
 }
+
+type WorkoutStore = WorkoutState & WorkoutActions;
 
 const useWorkoutStore = create<WorkoutStore>()(
   persist(

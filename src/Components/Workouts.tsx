@@ -5,7 +5,7 @@ import { Stack } from "@mantine/core";
 import { IconZzz } from "@tabler/icons-react";
 
 import WorkoutItem from "@/Components/Workout";
-import useWorkoutStore from "@/store";
+import useWorkoutStore from "@/stores/workouts";
 
 interface WorkoutsProps {
   date: string;

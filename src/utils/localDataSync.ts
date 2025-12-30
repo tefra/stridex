@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-import useWorkoutStore from "@/store";
+import useWorkoutStore from "@/stores/workouts";
 
 export const toJson = (): void => {
   const state = useWorkoutStore.getState();
