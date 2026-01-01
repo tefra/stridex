@@ -11,7 +11,7 @@ import { immer } from "zustand/middleware/immer";
 import type { Workout } from "@/schemas";
 
 interface WorkoutState {
-  workoutsByDate: Record<string, Workout[]>;
+  workouts: Record<string, Workout[]>;
 }
 
 interface WorkoutActions {
@@ -28,17 +28,17 @@ const useWorkoutStore = create<WorkoutStore>()(
   persist(
     immer(
       subscribeWithSelector((set, get) => ({
-        workoutsByDate: {},
+        workouts: {},
         getWorkout: (date: string, id: string) =>
-          get().workoutsByDate[date]?.find((w) => w.id === id),
-        getWorkouts: (date) => get().workoutsByDate[date] || [],
+          get().workouts[date]?.find((w) => w.id === id),
+        getWorkouts: (date) => get().workouts[date] || [],
         saveWorkout: (date: string, data: Workout) => {
           set((draft) => {
-            if (!draft.workoutsByDate[date]) {
-              draft.workoutsByDate[date] = [];
+            if (!draft.workouts[date]) {
+              draft.workouts[date] = [];
             }
 
-            const workouts = draft.workoutsByDate[date];
+            const workouts = draft.workouts[date];
             const existingIndex = workouts.findIndex((w) => w.id === data.id);
 
             if (existingIndex !== -1) {
@@ -50,19 +50,19 @@ const useWorkoutStore = create<WorkoutStore>()(
         },
         deleteWorkout: (date: string, workoutId: string) => {
           set((draft) => {
-            if (draft.workoutsByDate[date]) {
-              draft.workoutsByDate[date] = draft.workoutsByDate[date].filter(
+            if (draft.workouts[date]) {
+              draft.workouts[date] = draft.workouts[date].filter(
                 (w) => w.id !== workoutId
               );
-              if (draft.workoutsByDate[date].length === 0) {
-                delete draft.workoutsByDate[date];
+              if (draft.workouts[date].length === 0) {
+                delete draft.workouts[date];
               }
             }
           });
         },
         reorderWorkouts: (date, activeId, overId) =>
           set((draft) => {
-            const dayWorkouts = draft.workoutsByDate[date];
+            const dayWorkouts = draft.workouts[date];
             if (!dayWorkouts) return;
             const oldIndex = dayWorkouts.findIndex((w) => w.id === activeId);
             const newIndex = dayWorkouts.findIndex((w) => w.id === overId);

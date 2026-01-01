@@ -4,8 +4,7 @@ import useWorkoutStore from "@/stores/useWorkoutStore";
 
 export const toJson = (): void => {
   const state = useWorkoutStore.getState();
-  const data = state.workoutsByDate;
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
+  const blob = new Blob([JSON.stringify(state, null, 2)], {
     type: "application/json",
   });
   const url = URL.createObjectURL(blob);
@@ -31,7 +30,7 @@ export const fromJson = (): void => {
         if (typeof data !== "object" || data === null) {
           throw new Error("Invalid data");
         }
-        useWorkoutStore.setState({ workoutsByDate: data });
+        useWorkoutStore.setState(data);
       } catch (err) {
         console.log(err);
         alert("Invalid backup file");

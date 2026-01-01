@@ -17,10 +17,14 @@ const useAutoSync = (): void => {
   useEffect(() => {
     if (!authToken || !fileId) return;
 
+    let timeout: undefined | number;
     const unsubscribe = useWorkoutStore.subscribe(
-      (state) => state.workoutsByDate,
+      (state) => state.workouts,
       () => {
-        updateFile().catch((err) => console.log(err));
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          updateFile().catch(console.error);
+        }, 1000);
       },
       { equalityFn: shallow }
     );
@@ -28,6 +32,7 @@ const useAutoSync = (): void => {
     // eslint-disable-next-line consistent-return
     return () => {
       unsubscribe();
+      clearTimeout(timeout);
     };
   }, [authToken, fileId, updateFile]);
 };

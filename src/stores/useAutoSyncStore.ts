@@ -23,6 +23,7 @@ const useAutoSyncStore = create<DriveSyncState>()(
       setFileId: (id) => set({ fileId: id }),
 
       createFile: async (parent) => {
+        console.log(`Creating new file under ${parent}`);
         const { authToken, setFileId } = get();
         const res = await fetch("https://www.googleapis.com/drive/v3/files", {
           method: "POST",
@@ -40,8 +41,10 @@ const useAutoSyncStore = create<DriveSyncState>()(
         if (res.ok) {
           const file: { id: string } = await res.json();
           setFileId(file.id);
+          console.log(`File created: ${file.id}`);
         } else if (res.status === 401 || res.status === 403) {
           get().setAuthToken(null);
+          console.error("Invalid token");
         } else {
           throw Error(await res.text());
         }
@@ -61,20 +64,24 @@ const useAutoSyncStore = create<DriveSyncState>()(
           try {
             const remoteData = await res.json();
             useWorkoutStore.setState({
-              workoutsByDate: remoteData?.workoutsByDate,
+              workouts: remoteData?.workouts,
             });
+            console.log("Loaded remote data");
           } catch {
             await get().updateFile();
           }
         } else if (res.status === 404) {
           get().setFileId(null);
+          console.error("Remote file not found");
         } else if (res.status === 401 || res.status === 403) {
           get().setAuthToken(null);
+          console.error("Invalid token");
         } else {
           throw Error(await res.text());
         }
       },
       updateFile: async () => {
+        console.log("Updating remote file");
         const { authToken, fileId } = get();
         if (!authToken || !fileId) return;
 
@@ -96,9 +103,11 @@ const useAutoSyncStore = create<DriveSyncState>()(
         );
         if (res.status === 404) {
           get().setFileId(null);
+          console.log("Remote file not found");
         } else if (res.status === 401 || res.status === 403) {
           get().setAuthToken(null);
-        } else {
+          console.error("Invalid token");
+        } else if (!res.ok) {
           throw Error(await res.text());
         }
       },
