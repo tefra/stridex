@@ -12,32 +12,9 @@ interface Props {
   onClose: () => void;
 }
 
-interface FileResponse {
-  id: string;
-}
-
 const GoogleDrivePicker: React.FC<Props> = ({ onClose }) => {
-  const { authToken, setAuthToken, fileId, setFileId } = useAutoSyncStore();
-  const createFile = async (folder: string) => {
-    const res = await fetch("https://www.googleapis.com/drive/v3/files", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: "stridex-workouts.json",
-        mimeType: "application/json",
-        parents: [folder],
-      }),
-    });
-
-    if (!res.ok) {
-      throw Error(await res.text());
-    }
-    const file = (await res.json()) as FileResponse;
-    return file.id;
-  };
+  const { authToken, setAuthToken, fileId, setFileId, createFile } =
+    useAutoSyncStore();
 
   const handleAuthResponse = (e: CustomEvent) => {
     if (e.detail?.access_token) {
@@ -53,11 +30,11 @@ const GoogleDrivePicker: React.FC<Props> = ({ onClose }) => {
     if (!docs || docs.length === 0) return;
 
     const selected = docs[0];
-    setFileId(
-      selected.mimeType === "application/vnd.google-apps.folder"
-        ? await createFile(selected.id)
-        : selected.id
-    );
+    if (selected.mimeType === "application/vnd.google-apps.folder") {
+      await createFile(selected.id);
+    } else {
+      setFileId(selected.id);
+    }
     onClose();
   };
 
