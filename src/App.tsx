@@ -14,7 +14,6 @@ import { MonthPicker } from "@mantine/dates";
 import { modals } from "@mantine/modals";
 import {
   IconBrandGithub,
-  IconBrandGoogleDrive,
   IconChevronLeft,
   IconChevronRight,
   IconDownload,
@@ -24,10 +23,9 @@ import {
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 
-import GoogleDrivePicker from "@/Components/GoogleDrivePicker";
+import GoogleDriveButton from "@/Components/GoogleDriveButton";
 import Month from "@/Components/Month";
 import useAutoSync from "@/hooks/useAutoSync";
-import useAutoSyncStore from "@/stores/useAutoSyncStore";
 import { fromJson, toJson } from "@/utils/localDataSync";
 
 import type { Dayjs } from "dayjs";
@@ -35,10 +33,8 @@ import type { Dayjs } from "dayjs";
 const App: React.FC = () => {
   useAutoSync();
 
-  const { authToken, fileId } = useAutoSyncStore();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [currentDateTime, setCurrentDateTime] = useState<Dayjs>(dayjs());
-  const [isPickerOpen, setIsPickerOpen] = useState(false);
   const openMonthPicker = () => {
     modals.open({
       withCloseButton: false,
@@ -71,25 +67,12 @@ const App: React.FC = () => {
   return (
     <AppShell footer={{ height: 30 }} header={{ height: 60 }} padding="md">
       <AppShell.Header>
-        {isPickerOpen ? (
-          <GoogleDrivePicker onClose={() => setIsPickerOpen(false)} />
-        ) : null}
         <Group h="100%" px="md">
           <Group justify="space-between" style={{ flex: 1 }}>
             <Title>StrideX</Title>
 
             <Group align="center" gap="xs" ml="xl" visibleFrom="sm">
-              <Tooltip label="Link to Google Drive">
-                <ActionIcon
-                  /* eslint-disable-next-line no-nested-ternary */
-                  color={authToken ? "green" : fileId ? "red" : "gray"}
-                  onClick={() => setIsPickerOpen(true)}
-                  variant="subtle"
-                >
-                  <IconBrandGoogleDrive size={20} />
-                </ActionIcon>
-              </Tooltip>
-
+              <GoogleDriveButton />
               <Tooltip label="Import backup">
                 <ActionIcon color="gray" onClick={fromJson} variant="subtle">
                   <IconUpload size={20} />

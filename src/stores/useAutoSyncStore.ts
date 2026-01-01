@@ -6,11 +6,14 @@ import useWorkoutStore from "@/stores/useWorkoutStore";
 interface DriveSyncState {
   authToken: string | null;
   fileId: string | null;
+  loading: boolean;
   setAuthToken: (token: string | null) => void;
   setFileId: (id: string | null) => void;
+  setLoading: (value: boolean) => void;
   createFile: (parent: string) => Promise<void>;
   loadFile: () => Promise<void>;
   updateFile: () => Promise<void>;
+  validateToken: () => Promise<boolean>;
 }
 
 const useAutoSyncStore = create<DriveSyncState>()(
@@ -18,97 +21,134 @@ const useAutoSyncStore = create<DriveSyncState>()(
     (set, get) => ({
       authToken: null,
       fileId: null,
-
+      loading: false,
+      setLoading: (value: boolean) => set({ loading: value }),
       setAuthToken: (token) => set({ authToken: token }),
       setFileId: (id) => set({ fileId: id }),
-
       createFile: async (parent) => {
         console.log(`Creating new file under ${parent}`);
         const { authToken, setFileId } = get();
-        const res = await fetch("https://www.googleapis.com/drive/v3/files", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: "stridex-workouts.json",
-            mimeType: "application/json",
-            parents: [parent],
-          }),
-        });
 
-        if (res.ok) {
-          const file: { id: string } = await res.json();
-          setFileId(file.id);
-          console.log(`File created: ${file.id}`);
-        } else if (res.status === 401 || res.status === 403) {
-          get().setAuthToken(null);
-          console.error("Invalid token");
-        } else {
-          throw Error(await res.text());
+        try {
+          const res = await fetch("https://www.googleapis.com/drive/v3/files", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: "stridex-workouts.json",
+              mimeType: "application/json",
+              parents: [parent],
+            }),
+          });
+
+          if (res.ok) {
+            const file: { id: string } = await res.json();
+            setFileId(file.id);
+            console.log(`File created: ${file.id}`);
+          } else if (res.status === 401 || res.status === 403) {
+            get().setAuthToken(null);
+            console.error("Invalid token");
+          } else {
+            console.error("Create file failed:", await res.text());
+          }
+        } catch (error) {
+          console.error("Create file failed:", error);
         }
       },
       loadFile: async () => {
-        const { authToken, fileId } = get();
+        const { authToken, fileId, setLoading } = get();
         if (!authToken || !fileId) return;
 
-        const res = await fetch(
-          `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
-          {
-            headers: { Authorization: `Bearer ${authToken}` },
-          }
-        );
+        try {
+          setLoading(true);
+          const res = await fetch(
+            `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+            {
+              headers: { Authorization: `Bearer ${authToken}` },
+            }
+          );
 
-        if (res.ok) {
-          try {
-            const remoteData = await res.json();
-            useWorkoutStore.setState({
-              workouts: remoteData?.workouts,
-            });
-            console.log("Loaded remote data");
-          } catch {
-            await get().updateFile();
+          if (res.ok) {
+            try {
+              const remoteData = await res.json();
+              useWorkoutStore.setState({
+                workouts: remoteData?.workouts,
+              });
+              console.log("Loaded remote data");
+            } catch {
+              await get().updateFile();
+            }
+          } else if (res.status === 404) {
+            get().setFileId(null);
+            console.error("Remote file not found");
+          } else if (res.status === 401 || res.status === 403) {
+            get().setAuthToken(null);
+            console.error("Invalid token");
+          } else {
+            console.error("Load file failed:", await res.text());
           }
-        } else if (res.status === 404) {
-          get().setFileId(null);
-          console.error("Remote file not found");
-        } else if (res.status === 401 || res.status === 403) {
-          get().setAuthToken(null);
-          console.error("Invalid token");
-        } else {
-          throw Error(await res.text());
+        } catch (error) {
+          console.error("Load file failed:", error);
+        } finally {
+          setLoading(false);
         }
       },
       updateFile: async () => {
-        console.log("Updating remote file");
         const { authToken, fileId } = get();
         if (!authToken || !fileId) return;
 
+        console.log("Updating remote file");
         const data = useWorkoutStore.getState();
         const blob = new Blob([JSON.stringify(data, null, 2)], {
           type: "application/json",
         });
 
-        const res = await fetch(
-          `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,
-          {
-            method: "PATCH",
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-              "Content-Type": "application/json",
-            },
-            body: blob,
+        try {
+          const res = await fetch(
+            `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,
+            {
+              method: "PATCH",
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+                "Content-Type": "application/json",
+              },
+              body: blob,
+            }
+          );
+          if (res.status === 404) {
+            get().setFileId(null);
+            console.log("Remote file not found");
+          } else if (res.status === 401 || res.status === 403) {
+            get().setAuthToken(null);
+            console.error("Invalid token");
+          } else if (!res.ok) {
+            console.log("Update file failed:", await res.text());
           }
-        );
-        if (res.status === 404) {
-          get().setFileId(null);
-          console.log("Remote file not found");
-        } else if (res.status === 401 || res.status === 403) {
+        } catch (error) {
+          console.error("Fetch failed:", error);
+        }
+      },
+      validateToken: async () => {
+        const { authToken } = get();
+        if (!authToken) return false;
+
+        try {
+          const res = await fetch(
+            `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${authToken}`
+          );
+
+          if (res.ok) {
+            return true;
+          }
+
+          console.warn("Access token is invalid or expired", await res.text());
           get().setAuthToken(null);
-          console.error("Invalid token");
-        } else if (!res.ok) {
-          throw Error(await res.text());
+          return false;
+        } catch (err) {
+          get().setAuthToken(null);
+          return false;
         }
       },
     }),
