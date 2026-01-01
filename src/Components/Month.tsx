@@ -8,7 +8,7 @@ import weekday from "dayjs/plugin/weekday";
 
 import ActiveWorkout from "@/Components/ActiveWorkout";
 import Week from "@/Components/Week";
-import useWorkoutStore from "@/stores/workouts";
+import useWorkoutStore from "@/stores/useWorkoutStore";
 
 import type { DragEndEvent } from "@dnd-kit/core";
 

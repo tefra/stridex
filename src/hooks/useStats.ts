@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import useWorkoutStore from "@/stores/workouts";
+import useWorkoutStore from "@/stores/useWorkoutStore";
 
 import type { Dayjs } from "dayjs";
 

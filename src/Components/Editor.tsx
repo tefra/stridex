@@ -22,7 +22,7 @@ import { IconPlus, IconWand, IconX } from "@tabler/icons-react";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 
 import { PACE_OPTIONS, WorkoutSchema } from "@/schemas";
-import useWorkoutStore from "@/stores/workouts";
+import useWorkoutStore from "@/stores/useWorkoutStore";
 import { stepShorthand, workoutMainStep } from "@/utils/formatting";
 import { formatDurationDisplay, parseDurationInput } from "@/utils/time";
 

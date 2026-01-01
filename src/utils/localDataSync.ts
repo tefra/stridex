@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-import useWorkoutStore from "@/stores/workouts";
+import useWorkoutStore from "@/stores/useWorkoutStore";
 
 export const toJson = (): void => {
   const state = useWorkoutStore.getState();
@@ -33,6 +33,7 @@ export const fromJson = (): void => {
         }
         useWorkoutStore.setState({ workoutsByDate: data });
       } catch (err) {
+        console.log(err);
         alert("Invalid backup file");
       }
     };
