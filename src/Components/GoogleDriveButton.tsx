@@ -51,7 +51,9 @@ const GoogleDriveButton: React.FC = () => {
 
   if (!authToken) {
     color = "gray";
-    label = "Session expired – Click to re-authenticate with Google Drive";
+    label = fileId
+      ? "Synchronize with Google Drive"
+      : "Session expired – Click to re-authenticate with Google Drive";
     action = () => login();
   } else if (!fileId) {
     color = "orange";
