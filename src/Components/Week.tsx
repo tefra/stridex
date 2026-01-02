@@ -47,8 +47,8 @@ const Week: React.FC<Props> = ({ startDay, year, month }) => {
     },
     {
       label: "Delta",
-      value: `${delta.toFixed(1)}%`,
-      color: delta >= 0 ? "lime" : "red",
+      value: delta === null ? "N/A" : `${delta.toFixed(1)}%`,
+      color: delta === null || delta > 0 ? "lime" : "red",
       badge: true,
     },
   ];
