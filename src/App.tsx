@@ -43,7 +43,7 @@ const App: React.FC = () => {
       children: (
         <MonthPicker
           allowDeselect={false}
-          date={currentDateTime.toDate()}
+          defaultDate={currentDateTime.toDate()}
           value={currentDateTime.toDate()}
           onChange={(value) => {
             if (value) {
