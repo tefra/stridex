@@ -4,7 +4,10 @@ import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import { ModalsProvider } from "@mantine/modals";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { createRoot } from "react-dom/client";
+
+import { GOOGLE_CLIENT_ID } from "@/config";
 
 import App from "./App";
 
@@ -17,7 +20,9 @@ createRoot(root).render(
   <React.StrictMode>
     <MantineProvider defaultColorScheme="auto">
       <ModalsProvider>
-        <App />
+        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+          <App />
+        </GoogleOAuthProvider>
       </ModalsProvider>
     </MantineProvider>
   </React.StrictMode>

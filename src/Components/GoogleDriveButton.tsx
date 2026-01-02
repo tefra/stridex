@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   DrivePicker,
   DrivePickerDocsView,
 } from "@googleworkspace/drive-picker-react";
 import { ActionIcon, Tooltip } from "@mantine/core";
+import { useGoogleLogin } from "@react-oauth/google";
 import { IconBrandGoogleDrive } from "@tabler/icons-react";
 
 import { GOOGLE_APP_ID, GOOGLE_CLIENT_ID } from "@/config";
@@ -21,30 +22,49 @@ const GoogleDriveButton: React.FC = () => {
     validateToken,
   } = useAutoSyncStore();
 
-  let color = "gray";
-  let label = "Link to Google Drive";
+  useEffect(() => {
+    if (!authToken) return;
 
-  if (fileId && !authToken) {
-    color = "orange";
-    label = "Access token expired – click to re-authorize";
-  } else if (!fileId && authToken) {
-    color = "red";
-    label = "Linked file no longer exists – click to pick a new one";
-  } else if (fileId && authToken) {
-    color = "green";
-    label = "Synced with Google Drive";
-  }
-
-  const handleOnClick = () => {
     validateToken();
-    setOpenPicker(true);
-  };
+    const interval = setInterval(validateToken, 10 * 60 * 1000);
+    // eslint-disable-next-line consistent-return
+    return () => {
+      clearInterval(interval);
+    };
+  }, [authToken, fileId, validateToken]);
 
-  const handleAuthResponse = (e: CustomEvent) => {
-    if (e.detail?.access_token) {
-      setAuthToken(e.detail.access_token);
-    }
-  };
+  let color: string;
+  let label: string;
+  let action: () => void;
+
+  const login = useGoogleLogin({
+    scope: "https://www.googleapis.com/auth/drive.file",
+    include_granted_scopes: false,
+    prompt: "",
+    onSuccess: (response) => {
+      setAuthToken(response.access_token);
+      if (!fileId) {
+        setOpenPicker(true);
+      }
+    },
+  });
+
+  if (!authToken) {
+    color = "gray";
+    label = "Session expired – Click to re-authenticate with Google Drive";
+    action = () => login();
+  } else if (!fileId) {
+    color = "orange";
+    label = "Authorized – Select a file or folder to sync with";
+    action = () => setOpenPicker(true);
+  } else {
+    color = "green";
+    label = "Auto-sync enabled – Click to disconnect";
+    action = () => {
+      setAuthToken(null);
+      setFileId(null);
+    };
+  }
 
   const handlePicked = async (e: CustomEvent) => {
     const { docs } = e.detail;
@@ -64,19 +84,22 @@ const GoogleDriveButton: React.FC = () => {
   return (
     <React.Fragment>
       <Tooltip label={label}>
-        <ActionIcon color={color} onClick={handleOnClick} variant="subtle">
+        <ActionIcon color={color} onClick={action} variant="subtle">
           <IconBrandGoogleDrive size={20} />
         </ActionIcon>
       </Tooltip>
 
-      {openPicker ? (
+      {openPicker && authToken ? (
         <DrivePicker
           app-id={GOOGLE_APP_ID}
           client-id={GOOGLE_CLIENT_ID}
-          oauth-token={authToken ?? undefined}
+          oauth-token={authToken}
           onCanceled={() => setOpenPicker(false)}
-          onOauthResponse={handleAuthResponse}
           onPicked={handlePicked}
+          onOauthError={() => {
+            setAuthToken(null);
+            setOpenPicker(false);
+          }}
         >
           <DrivePickerDocsView
             enable-drives="false"
