@@ -148,6 +148,7 @@ const useAutoSyncStore = create<DriveSyncState>()(
           return false;
         } catch (err) {
           get().setAuthToken(null);
+          console.log("Validate token failed", err);
           return false;
         }
       },

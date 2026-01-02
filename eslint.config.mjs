@@ -79,6 +79,8 @@ export default [
   ...prettierConfig,
   {
     rules: {
+      // Allow console logs
+      "no-console": "off",
       // No file extensions in imports
       "import-x/extensions": ["error", "never", { fix: true }],
       // Immer

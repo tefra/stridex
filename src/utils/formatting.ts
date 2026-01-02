@@ -4,11 +4,11 @@ import type { Step, Workout } from "@/schemas";
 
 export const stepShorthand = (
   step: Step,
-  useAbbrevations = false,
+  useAbbreviations = false,
   skipRest = false
 ): string => {
   const paceType = PaceType[step.pace];
-  const pace = useAbbrevations ? paceType.abbr : paceType.label;
+  const pace = useAbbreviations ? paceType.abbr : paceType.label;
 
   if (step.repetitions === 1) {
     return `${pace} ${step.durationValue}${step.durationUnit}`;

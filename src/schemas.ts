@@ -67,13 +67,6 @@ export const PaceType = {
   },
 } as const;
 
-export const DurationType = {
-  sec: { type: "time", label: "Seconds" },
-  mi: { type: "distance", label: "Miles" },
-  km: { type: "distance", label: "Kilometers" },
-  m: { type: "distance", label: "Meters" },
-};
-
 export const PACE_OPTIONS = Object.entries(PaceType).map(([value, info]) => ({
   value,
   label: info.label,

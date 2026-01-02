@@ -33,7 +33,6 @@ export const fromJson = (): void => {
         useWorkoutStore.setState(data);
       } catch (err) {
         console.log(err);
-        alert("Invalid backup file");
       }
     };
     reader.readAsText(file);
