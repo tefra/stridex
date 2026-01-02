@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Box, Group, Paper, SimpleGrid, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 
 import Day from "@/Components/Day";
 import useStats from "@/hooks/useStats";
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const Week: React.FC<Props> = ({ startDay, year, month }) => {
+  const { t } = useTranslation();
   const days = Array.from({ length: 7 }, (_, i) => startDay.add(i, "day"));
   const stats = useStats(days);
   const previousStartDay = startDay.subtract(1, "week");
@@ -26,28 +28,28 @@ const Week: React.FC<Props> = ({ startDay, year, month }) => {
 
   const summaries = [
     {
-      label: "Total",
+      label: t("week.total"),
       value: `${stats.total.toFixed(1)}km`,
       color: "indigo",
     },
     {
-      label: "Easy",
+      label: t("week.easy"),
       value: `${stats.easy.toFixed(1)}km`,
       color: "teal",
     },
     {
-      label: "Speed",
+      label: t("week.speed"),
       value: `${stats.speed.toFixed(1)}km`,
       color: "orange",
     },
     {
-      label: "Ratio",
+      label: t("week.ratio"),
       value: `${stats.easyPercent.toFixed(0)}/${stats.speedPercent.toFixed(0)}`,
       color: stats.easyPercent < 80 ? "yellow" : "green",
     },
     {
-      label: "Delta",
-      value: delta === null ? "N/A" : `${delta.toFixed(1)}%`,
+      label: t("week.delta"),
+      value: delta === null ? t("week.na") : `${delta.toFixed(1)}%`,
       color: delta === null || delta > 0 ? "lime" : "red",
       badge: true,
     },

@@ -2,6 +2,7 @@ import React from "react";
 
 import { useDroppable } from "@dnd-kit/core";
 import { Box, Paper, Text, Tooltip } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 
 import { openEditor } from "@/Components/Editor";
 import Workouts from "@/Components/Workouts";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 const Day: React.FC<Props> = ({ date, current }) => {
+  const { t } = useTranslation();
   const key = date.format("YYYY-MM-DD");
   const isWeekend = date.day() === 0 || date.day() === 6;
   const { setNodeRef, isOver } = useDroppable({
@@ -38,14 +40,20 @@ const Day: React.FC<Props> = ({ date, current }) => {
         transition: "background-color 0.2s, border 0.2s",
       }}
     >
-      <Tooltip withArrow label="Click to add a workout">
+      <Tooltip withArrow label={t("day.addWorkout")}>
         <Text
           c={isWeekend ? "red" : "default"}
           fw={700}
-          onClick={() => openEditor(key)}
           size="md"
           style={{ cursor: "pointer" }}
           ta="right"
+          onClick={() =>
+            openEditor(
+              key,
+              { id: "", description: "", steps: [] },
+              t("editor.titleNew", { date: key })
+            )
+          }
         >
           {date.date()}
         </Text>
@@ -53,7 +61,7 @@ const Day: React.FC<Props> = ({ date, current }) => {
       <Box mt="auto" pt="sm">
         {isOver ? (
           <Text c="blue.2" fw={700} size="md" ta="center">
-            Drop to copy
+            {t("day.dropToCopy")}
           </Text>
         ) : (
           <Workouts date={key} />

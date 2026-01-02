@@ -10,6 +10,7 @@ import { createRoot } from "react-dom/client";
 import { GOOGLE_CLIENT_ID } from "@/config";
 
 import App from "./App";
+import "./i18n";
 
 const root = document.getElementById("root");
 if (!root) {

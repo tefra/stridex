@@ -4,9 +4,10 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Group, Text, Tooltip } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 
 import { openEditor } from "@/Components/Editor";
-import { PaceType } from "@/schemas";
+import { paceColors } from "@/schemas";
 import { workoutMainStep, workoutShorthand } from "@/utils/formatting";
 
 import type { Workout } from "@/schemas";
@@ -18,8 +19,8 @@ interface Props {
 }
 
 const WorkoutItem: React.FC<Props> = ({ date, workout, index }) => {
+  const { t } = useTranslation();
   const mainStep = workoutMainStep(workout);
-  const mainStepInfo = PaceType[mainStep.pace];
   const {
     attributes,
     listeners,
@@ -56,14 +57,20 @@ const WorkoutItem: React.FC<Props> = ({ date, workout, index }) => {
         {...listeners}
         {...attributes}
       />
-      <Tooltip label={workoutShorthand(workout)}>
+      <Tooltip label={workoutShorthand(workout, t)}>
         <Text
-          c={mainStepInfo.color}
+          c={paceColors[mainStep.pace]}
           fw={700}
-          onClick={() => openEditor(date, workout, index)}
           size="sm"
           style={{ cursor: "pointer" }}
           truncate="end"
+          onClick={() =>
+            openEditor(
+              date,
+              workout,
+              t("editor.titleEdit", { date, index: index + 1 })
+            )
+          }
         >
           {workout.description}
         </Text>

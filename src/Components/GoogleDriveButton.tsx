@@ -7,11 +7,13 @@ import {
 import { ActionIcon, Tooltip } from "@mantine/core";
 import { useGoogleLogin } from "@react-oauth/google";
 import { IconBrandGoogleDrive } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 
 import { GOOGLE_APP_ID, GOOGLE_CLIENT_ID } from "@/config";
 import useAutoSyncStore from "@/stores/useAutoSyncStore";
 
 const GoogleDriveButton: React.FC = () => {
+  const { t } = useTranslation();
   const [openPicker, setOpenPicker] = useState(false);
   const {
     authToken,
@@ -51,17 +53,15 @@ const GoogleDriveButton: React.FC = () => {
 
   if (!authToken) {
     color = "gray";
-    label = fileId
-      ? "Synchronize with Google Drive"
-      : "Session expired – Click to re-authenticate with Google Drive";
+    label = fileId ? t("drive.reauthenticate") : t("drive.connect");
     action = () => login();
   } else if (!fileId) {
     color = "orange";
-    label = "Authorized – Select a file or folder to sync with";
+    label = t("drive.selectFileOrFolder");
     action = () => setOpenPicker(true);
   } else {
     color = "green";
-    label = "Auto-sync enabled – Click to disconnect";
+    label = t("drive.synced");
     action = () => {
       setAuthToken(null);
       setFileId(null);

@@ -1,14 +1,18 @@
-import { paceIntensityOrder, PaceType } from "@/schemas";
+import { paceIntensityOrder } from "@/schemas";
+
+import type { TFunction } from "i18next";
 
 import type { Step, Workout } from "@/schemas";
 
 export const stepShorthand = (
   step: Step,
+  t: TFunction,
   useAbbreviations = false,
   skipRest = false
 ): string => {
-  const paceType = PaceType[step.pace];
-  const pace = useAbbreviations ? paceType.abbr : paceType.label;
+  const pace = useAbbreviations
+    ? t(`paces.${step.pace}.abbr`)
+    : t(`paces.${step.pace}.label`);
 
   if (step.repetitions === 1) {
     return `${pace} ${step.durationValue}${step.durationUnit}`;
@@ -16,19 +20,22 @@ export const stepShorthand = (
 
   let repStr = `${step.repetitions}×${step.durationValue}${step.durationUnit} @ ${pace}`;
   if (!skipRest && step.recoveryValue && step.recoveryValue > 0) {
-    const skip = step.skipLastRecovery ? " (skip last)" : "";
+    const skip = step.skipLastRecovery ? t("formatting.skipLast") : "";
     repStr += ` [${step.recoveryValue}${step.recoveryUnit}${skip}]`;
   }
   return repStr;
 };
-export const workoutShorthand = (workout: Workout): string =>
-  workout.steps.map((s) => stepShorthand(s)).join(" + ");
+
+export const workoutShorthand = (workout: Workout, t: TFunction): string =>
+  workout.steps.map((s) => stepShorthand(s, t)).join(" + ");
+
 export const workoutMainStep = (workout: Workout): Step =>
   workout.steps.reduce((primary, step) => {
     const currentIntensity = paceIntensityOrder.indexOf(step.pace);
     const primaryIntensity = paceIntensityOrder.indexOf(primary.pace);
     return currentIntensity < primaryIntensity ? step : primary;
   });
+
 export const calculatePercentDelta = (
   current: number,
   previous: number

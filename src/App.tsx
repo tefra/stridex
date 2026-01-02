@@ -22,6 +22,7 @@ import {
   IconUpload,
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 
 import GoogleDriveButton from "@/Components/GoogleDriveButton";
 import Month from "@/Components/Month";
@@ -31,10 +32,12 @@ import { fromJson, toJson } from "@/utils/localDataSync";
 import type { Dayjs } from "dayjs";
 
 const App: React.FC = () => {
+  const { t } = useTranslation();
   useAutoSync();
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [currentDateTime, setCurrentDateTime] = useState<Dayjs>(dayjs());
+
   const openMonthPicker = () => {
     modals.open({
       withCloseButton: false,
@@ -69,27 +72,26 @@ const App: React.FC = () => {
       <AppShell.Header>
         <Group h="100%" px="md">
           <Group justify="space-between" style={{ flex: 1 }}>
-            <Title>StrideX</Title>
-
+            <Title>{t("app.title")}</Title>
             <Group align="center" gap="xs" ml="xl" visibleFrom="sm">
               <GoogleDriveButton />
-              <Tooltip label="Import backup">
+              <Tooltip label={t("backup.import")}>
                 <ActionIcon color="gray" onClick={fromJson} variant="subtle">
                   <IconUpload size={20} />
                 </ActionIcon>
               </Tooltip>
-              <Tooltip label="Export backup">
+              <Tooltip label={t("backup.export")}>
                 <ActionIcon color="gray" onClick={toJson} variant="subtle">
                   <IconDownload size={20} />
                 </ActionIcon>
               </Tooltip>
               <Tooltip
                 withArrow
-                label="View source on GitHub"
+                label={t("github.viewSource")}
                 position="bottom"
               >
                 <ActionIcon
-                  aria-label="GitHub repository"
+                  aria-label={t("github.ariaLabel")}
                   color="gray"
                   component="a"
                   href="https://github.com/tefra/stridex"
@@ -107,8 +109,8 @@ const App: React.FC = () => {
                 position="bottom"
                 label={
                   colorScheme === "dark"
-                    ? "Switch to light mode"
-                    : "Switch to dark mode"
+                    ? t("theme.switchToLight")
+                    : t("theme.switchToDark")
                 }
               >
                 <ActionIcon
@@ -124,7 +126,11 @@ const App: React.FC = () => {
                   )}
                 </ActionIcon>
               </Tooltip>
-              <Tooltip withArrow label="Previous month" position="bottom">
+              <Tooltip
+                withArrow
+                label={t("nav.previousMonth")}
+                position="bottom"
+              >
                 <ActionIcon
                   color="gray"
                   onClick={goToPreviousMonth}
@@ -142,7 +148,7 @@ const App: React.FC = () => {
               >
                 {currentDateTime.format("MMM YYYY")}
               </Text>
-              <Tooltip withArrow label="Next month" position="bottom">
+              <Tooltip withArrow label={t("nav.nextMonth")} position="bottom">
                 <ActionIcon
                   color="gray"
                   onClick={goToNextMonth}
@@ -162,7 +168,7 @@ const App: React.FC = () => {
       <AppShell.Footer ta="center">
         <Group align="center" h="100%" justify="center" px="md">
           <Text c="dimmed" size="xs">
-            Plan your strides ×{" "}
+            {t("footer.tagline")}{" "}
             <Anchor
               c="dimmed"
               href="https://github.com/tefra/stridex"

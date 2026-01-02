@@ -4,7 +4,7 @@ import { useDndContext } from "@dnd-kit/core";
 import { Group, Text } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
 
-import { PaceType } from "@/schemas";
+import { paceColors } from "@/schemas";
 import { workoutMainStep } from "@/utils/formatting";
 
 import type { Workout } from "@/schemas";
@@ -16,7 +16,6 @@ const ActiveWorkout: React.FC = () => {
 
   const workout = active.data.current.workout as Workout;
   const mainStep = workoutMainStep(workout);
-  const mainStepInfo = PaceType[mainStep.pace];
 
   return (
     <Group
@@ -37,7 +36,7 @@ const ActiveWorkout: React.FC = () => {
           flexShrink: 0,
         }}
       />
-      <Text c={mainStepInfo.color} fw={700} size="sm" truncate="end">
+      <Text c={paceColors[mainStep.pace]} fw={700} size="sm" truncate="end">
         {workout.description}
       </Text>
     </Group>

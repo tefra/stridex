@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const PACES = [
+const paces = [
   "warmup",
   "easy",
   "base",
@@ -22,64 +22,27 @@ export const paceIntensityOrder = [
   "warmup",
 ] as const;
 
-export const Durations = ["sec", "km", "m"];
+export const durations = ["sec", "km", "m"];
 
-export const PaceType = {
-  warmup: {
-    label: "Warm-Up",
-    abbr: "WU",
-    color: "blue.6",
-  },
-  easy: {
-    label: "Easy",
-    abbr: "EZ",
-    color: "cyan.6",
-  },
-  base: {
-    label: "Base",
-    abbr: "B",
-    color: "teal.6",
-  },
-  tempo: {
-    label: "Tempo",
-    abbr: "T",
-    color: "orange.6",
-  },
-  subthreshold: {
-    label: "Sub-Threshold",
-    abbr: "ST",
-    color: "yellow.6",
-  },
-  threshold: {
-    label: "Threshold",
-    abbr: "TH",
-    color: "pink.7",
-  },
-  sprint: {
-    label: "Sprint",
-    abbr: "S",
-    color: "red.7",
-  },
-  cooldown: {
-    label: "Cool-Down",
-    abbr: "CD",
-    color: "indigo.6",
-  },
+export const paceColors = {
+  warmup: "blue.6",
+  easy: "cyan.6",
+  base: "teal.6",
+  tempo: "orange.6",
+  subthreshold: "yellow.6",
+  threshold: "pink.7",
+  sprint: "red.7",
+  cooldown: "indigo.6",
 } as const;
-
-export const PACE_OPTIONS = Object.entries(PaceType).map(([value, info]) => ({
-  value,
-  label: info.label,
-}));
 
 export const StepSchema = z
   .object({
-    pace: z.enum(PACES),
-    durationValue: z.number().positive("Duration value must be positive"),
-    durationUnit: z.enum(Durations),
-    repetitions: z.number().int().min(1, "At least 1 repetition"),
-    recoveryValue: z.number().min(0, "Recovery value must be a positive"),
-    recoveryUnit: z.enum(Durations),
+    pace: z.enum(paces),
+    durationValue: z.number().positive(),
+    durationUnit: z.enum(durations),
+    repetitions: z.number().int().min(1),
+    recoveryValue: z.number().min(0),
+    recoveryUnit: z.enum(durations),
     skipLastRecovery: z.boolean().optional(),
   })
   .refine(
@@ -90,16 +53,14 @@ export const StepSchema = z
       return true;
     },
     {
-      message:
-        "Recovery unit is required when recovery value is greater than 0",
       path: ["recoveryUnit"],
     }
   );
 
 export const WorkoutSchema = z.object({
   id: z.string(),
-  description: z.string().trim().min(1, "Workout description is required"),
-  steps: z.array(StepSchema).min(1, "Workout must have at least one step"),
+  description: z.string().nonempty(),
+  steps: z.array(StepSchema).min(1),
 });
 
 export type Step = z.infer<typeof StepSchema>;

@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "StrideX"
+  },
+  "backup": {
+    "import": "Import backup",
+    "export": "Export backup"
+  },
+  "github": {
+    "viewSource": "View source on GitHub",
+    "ariaLabel": "GitHub repository"
+  },
+  "theme": {
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
+  },
+  "nav": {
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month"
+  },
+  "footer": {
+    "tagline": "Plan your strides ×"
+  },
+  "drive": {
+    "connect": "Synchronize with Google Drive",
+    "reauthenticate": "Session expired – Click to re-authenticate with Google Drive",
+    "selectFileOrFolder": "Authorized – Select a file or folder to sync with",
+    "synced": "Auto-sync enabled – Click to disconnect"
+  },
+  "day": {
+    "addWorkout": "Click to add a workout",
+    "dropToCopy": "Drop to copy"
+  },
+  "week": {
+    "total": "Total",
+    "easy": "Easy",
+    "speed": "Speed",
+    "ratio": "Ratio",
+    "delta": "Delta",
+    "na": "N/A"
+  },
+  "editor": {
+    "stepLegend": "Step {{number}}",
+    "duration": "Duration",
+    "time": "Time",
+    "distance": "Distance",
+    "pace": "Pace",
+    "reps": "Reps",
+    "recovery": "Recovery",
+    "skipLastRecovery": "Skip last recovery",
+    "removeStep": "Remove Step",
+    "addStep": "Add Step",
+    "description": "Description",
+    "generate": "Generate",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "titleEdit": "Workout: {{date}} - {{index}}",
+    "titleNew": "New Workout: {{date}}"
+  },
+  "formatting": {
+    "skipLast": " (skip last)"
+  },
+  "paces": {
+    "warmup": {
+      "label": "Warm-Up",
+      "abbr": "WU"
+    },
+    "easy": {
+      "label": "Easy",
+      "abbr": "EZ"
+    },
+    "base": {
+      "label": "Base",
+      "abbr": "B"
+    },
+    "tempo": {
+      "label": "Tempo",
+      "abbr": "T"
+    },
+    "subthreshold": {
+      "label": "Sub-Threshold",
+      "abbr": "ST"
+    },
+    "threshold": {
+      "label": "Threshold",
+      "abbr": "TH"
+    },
+    "sprint": {
+      "label": "Sprint",
+      "abbr": "S"
+    },
+    "cooldown": {
+      "label": "Cool-Down",
+      "abbr": "CD"
+    }
+  },
+  "units": {
+    "sec": "seconds",
+    "km": "kilometers",
+    "m": "meters"
+  }
+}

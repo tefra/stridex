@@ -20,8 +20,9 @@ import { useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
 import { IconPlus, IconWand, IconX } from "@tabler/icons-react";
 import { zod4Resolver } from "mantine-form-zod-resolver";
+import { useTranslation } from "react-i18next";
 
-import { PACE_OPTIONS, WorkoutSchema } from "@/schemas";
+import { StepSchema, WorkoutSchema } from "@/schemas";
 import useWorkoutStore from "@/stores/useWorkoutStore";
 import { stepShorthand, workoutMainStep } from "@/utils/formatting";
 import { formatDurationDisplay, parseDurationInput } from "@/utils/time";
@@ -30,17 +31,16 @@ import type { Workout } from "@/schemas";
 
 interface EditorProps {
   date: string;
-  editing: boolean;
   workout: Workout;
   onComplete: () => void;
 }
 
 export const Editor: React.FC<EditorProps> = ({
   date,
-  editing,
   workout,
   onComplete,
 }) => {
+  const { t } = useTranslation();
   const { saveWorkout, deleteWorkout } = useWorkoutStore();
 
   const form = useForm({
@@ -74,25 +74,29 @@ export const Editor: React.FC<EditorProps> = ({
 
   const generateDescription = () => {
     const step = workoutMainStep(form.values);
-    const description = stepShorthand(step, true, true);
+    const description = stepShorthand(step, t, true, true);
     form.setFieldValue("description", description);
   };
 
   return (
     <Stack gap="sm">
       {form.values.steps.map((step, index) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <Fieldset key={index} legend={`Step ${index + 1}`} radius="sm">
+        <Fieldset
+          // eslint-disable-next-line react/no-array-index-key
+          key={index}
+          legend={t("editor.stepLegend", { number: index + 1 })}
+          radius="sm"
+        >
           <Grid align="end" gutter="md">
             <Grid.Col span={6}>
-              <Input.Wrapper label="Duration">
+              <Input.Wrapper label={t("editor.duration")}>
                 <Group grow align="start" gap="xs">
                   <SegmentedControl
                     size="sm"
                     value={step.durationUnit === "sec" ? "time" : "distance"}
                     data={[
-                      { label: "Time", value: "time" },
-                      { label: "Distance", value: "distance" },
+                      { label: t("editor.time"), value: "time" },
+                      { label: t("editor.distance"), value: "distance" },
                     ]}
                     onChange={(value) => {
                       form.setFieldValue(
@@ -141,14 +145,17 @@ export const Editor: React.FC<EditorProps> = ({
             <Grid.Col span={4}>
               <Select
                 allowDeselect={false}
-                data={PACE_OPTIONS}
-                label="Pace"
+                label={t("editor.pace")}
+                data={StepSchema.shape.pace.options.map((value) => ({
+                  value,
+                  label: t(`paces.${value}.label`),
+                }))}
                 {...form.getInputProps(`steps.${index}.pace`)}
               />
             </Grid.Col>
             <Grid.Col span={2}>
               <NumberInput
-                label="Reps"
+                label={t("editor.reps")}
                 min={1}
                 {...form.getInputProps(`steps.${index}.repetitions`)}
               />
@@ -156,14 +163,14 @@ export const Editor: React.FC<EditorProps> = ({
           </Grid>
           <Grid align="end" gutter="md">
             <Grid.Col span={6}>
-              <Input.Wrapper label="Recovery">
+              <Input.Wrapper label={t("editor.recovery")}>
                 <Group grow align="start" gap="xs">
                   <SegmentedControl
                     size="sm"
                     value={step.recoveryUnit === "sec" ? "time" : "distance"}
                     data={[
-                      { label: "Time", value: "time" },
-                      { label: "Distance", value: "distance" },
+                      { label: t("editor.time"), value: "time" },
+                      { label: t("editor.distance"), value: "distance" },
                     ]}
                     onChange={(value) => {
                       form.setFieldValue(
@@ -212,7 +219,7 @@ export const Editor: React.FC<EditorProps> = ({
             <Grid.Col span={4}>
               <Switch
                 disabled={step.repetitions === 1}
-                label="Skip last recovery"
+                label={t("editor.skipLastRecovery")}
                 mb={5}
                 {...form.getInputProps(`steps.${index}.skipLastRecovery`, {
                   type: "checkbox",
@@ -220,7 +227,7 @@ export const Editor: React.FC<EditorProps> = ({
               />
             </Grid.Col>
             <Grid.Col span={2} ta="right">
-              <Tooltip label="Remove Step">
+              <Tooltip label={t("editor.removeStep")}>
                 <ActionIcon
                   color="red"
                   onClick={() => form.removeListItem("steps", index)}
@@ -240,14 +247,14 @@ export const Editor: React.FC<EditorProps> = ({
         onClick={addStep}
         variant="light"
       >
-        Add Step
+        {t("editor.addStep")}
       </Button>
       <TextInput
         required
-        label="Description"
+        label={t("editor.description")}
         {...form.getInputProps(`description`)}
         rightSection={
-          <Tooltip label="Generate">
+          <Tooltip label={t("editor.generate")}>
             <ActionIcon onClick={generateDescription} variant="subtle">
               <IconWand size={16} />
             </ActionIcon>
@@ -256,15 +263,15 @@ export const Editor: React.FC<EditorProps> = ({
       />
       <Group justify="flex-end" mt="xl">
         <Button onClick={onComplete} variant="default">
-          Cancel
+          {t("editor.cancel")}
         </Button>
-        {editing ? (
+        {workout.id ? (
           <Button color="red" onClick={handleDelete} variant="filled">
-            Delete
+            {t("editor.delete")}
           </Button>
         ) : null}
         <Button disabled={!form.isValid()} onClick={handleSave}>
-          Save
+          {t("editor.save")}
         </Button>
       </Group>
     </Stack>
@@ -273,27 +280,17 @@ export const Editor: React.FC<EditorProps> = ({
 
 export const openEditor = (
   date: string,
-  workout: Workout | null = null,
-  index: number | null = null
+  workout: Workout,
+  title: string
 ): void => {
   modals.open({
-    title:
-      workout !== null && index !== null
-        ? `Workout: ${date} - ${index + 1}`
-        : `New Workout: ${date}`,
+    title,
     size: "xl",
     children: (
       <Editor
         date={date}
-        editing={!!workout}
         onComplete={() => modals.closeAll()}
-        workout={
-          workout ?? {
-            id: "",
-            description: "",
-            steps: [],
-          }
-        }
+        workout={workout}
       />
     ),
   });

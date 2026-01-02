@@ -5,6 +5,7 @@ import { Box, SimpleGrid, Text } from "@mantine/core";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import weekday from "dayjs/plugin/weekday";
+import { useTranslation } from "react-i18next";
 
 import ActiveWorkout from "@/Components/ActiveWorkout";
 import Week from "@/Components/Week";
@@ -23,6 +24,7 @@ interface Props {
 }
 
 const Month: React.FC<Props> = ({ month, year }) => {
+  const { t } = useTranslation();
   const { saveWorkout, reorderWorkouts } = useWorkoutStore();
 
   const mondays = useMemo(() => {
@@ -38,15 +40,15 @@ const Month: React.FC<Props> = ({ month, year }) => {
     return weekStarts;
   }, [year, month]);
 
-  const weekdayNames = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-    "Total",
+  const headers = [
+    dayjs().weekday(1).format("dddd"),
+    dayjs().weekday(2).format("dddd"),
+    dayjs().weekday(3).format("dddd"),
+    dayjs().weekday(4).format("dddd"),
+    dayjs().weekday(5).format("dddd"),
+    dayjs().weekday(6).format("dddd"),
+    dayjs().weekday(7).format("dddd"),
+    t("week.total"),
   ];
 
   const onDragEnd = (event: DragEndEvent): void => {
@@ -65,11 +67,12 @@ const Month: React.FC<Props> = ({ month, year }) => {
       reorderWorkouts(sourceDate, sourceId, targetId);
     }
   };
+
   return (
     <DndContext collisionDetection={closestCorners} onDragEnd={onDragEnd}>
       <Box p={0}>
         <SimpleGrid cols={8} mb="xs" spacing="xs">
-          {weekdayNames.map((name, index) => (
+          {headers.map((name, index) => (
             <Text
               key={name}
               c="dimmed"
