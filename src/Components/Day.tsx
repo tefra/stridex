@@ -42,7 +42,7 @@ const Day: React.FC<Props> = ({ date, current }) => {
         <Text
           c={isWeekend ? "red" : "default"}
           fw={700}
-          onClick={() => openEditor(key, null)}
+          onClick={() => openEditor(key)}
           size="md"
           style={{ cursor: "pointer" }}
           ta="right"

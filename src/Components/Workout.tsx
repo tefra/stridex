@@ -14,9 +14,10 @@ import type { Workout } from "@/schemas";
 interface Props {
   date: string;
   workout: Workout;
+  index: number;
 }
 
-const WorkoutItem: React.FC<Props> = ({ date, workout }) => {
+const WorkoutItem: React.FC<Props> = ({ date, workout, index }) => {
   const mainStep = workoutMainStep(workout);
   const mainStepInfo = PaceType[mainStep.pace];
   const {
@@ -59,7 +60,7 @@ const WorkoutItem: React.FC<Props> = ({ date, workout }) => {
         <Text
           c={mainStepInfo.color}
           fw={700}
-          onClick={() => openEditor(date, workout)}
+          onClick={() => openEditor(date, workout, index)}
           size="sm"
           style={{ cursor: "pointer" }}
           truncate="end"

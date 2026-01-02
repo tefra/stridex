@@ -219,8 +219,8 @@ export const Editor: React.FC<EditorProps> = ({
                 })}
               />
             </Grid.Col>
-            <Grid.Col span={2}>
-              <Group align="end" h="100%" justify="flex-end">
+            <Grid.Col span={2} ta="right">
+              <Tooltip label="Remove Step">
                 <ActionIcon
                   color="red"
                   onClick={() => form.removeListItem("steps", index)}
@@ -229,7 +229,7 @@ export const Editor: React.FC<EditorProps> = ({
                 >
                   <IconX size={20} />
                 </ActionIcon>
-              </Group>
+              </Tooltip>
             </Grid.Col>
           </Grid>
         </Fieldset>
@@ -271,9 +271,16 @@ export const Editor: React.FC<EditorProps> = ({
   );
 };
 
-export const openEditor = (date: string, workout: Workout | null): void => {
+export const openEditor = (
+  date: string,
+  workout: Workout | null = null,
+  index: number | null = null
+): void => {
   modals.open({
-    title: workout ? "Edit Workout" : "New Workout",
+    title:
+      workout !== null && index !== null
+        ? `Workout: ${date} - ${index + 1}`
+        : `New Workout: ${date}`,
     size: "xl",
     children: (
       <Editor

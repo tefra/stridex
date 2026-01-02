@@ -20,8 +20,13 @@ const Workouts: React.FC<WorkoutsProps> = ({ date }) => {
         {workouts.length === 0 ? (
           <IconZzz size={16} />
         ) : (
-          workouts.map((workout) => (
-            <WorkoutItem key={workout.id} date={date} workout={workout} />
+          workouts.map((workout, index) => (
+            <WorkoutItem
+              key={workout.id}
+              date={date}
+              index={index}
+              workout={workout}
+            />
           ))
         )}
       </Stack>
