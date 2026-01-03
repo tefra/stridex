@@ -70,95 +70,85 @@ const App: React.FC = () => {
   return (
     <AppShell footer={{ height: 30 }} header={{ height: 60 }} padding="md">
       <AppShell.Header>
-        <Group h="100%" px="md">
-          <Group justify="space-between" style={{ flex: 1 }}>
-            <Title>{t("app.title")}</Title>
-            <Group align="center" gap="xs" ml="xl" visibleFrom="sm">
-              <GoogleDriveButton />
-              <Tooltip label={t("backup.import")}>
-                <ActionIcon color="gray" onClick={fromJson} variant="subtle">
-                  <IconUpload size={20} />
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip label={t("backup.export")}>
-                <ActionIcon color="gray" onClick={toJson} variant="subtle">
-                  <IconDownload size={20} />
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip
-                withArrow
-                label={t("github.viewSource")}
-                position="bottom"
+        <Group justify="space-between" style={{ flex: 1 }}>
+          <Title>{t("app.title")}</Title>
+          <Group align="center" gap="xs" ml="xl" visibleFrom="sm">
+            <GoogleDriveButton />
+            <Tooltip label={t("backup.import")}>
+              <ActionIcon color="gray" onClick={fromJson} variant="subtle">
+                <IconUpload size={20} />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label={t("backup.export")}>
+              <ActionIcon color="gray" onClick={toJson} variant="subtle">
+                <IconDownload size={20} />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip withArrow label={t("github.viewSource")} position="bottom">
+              <ActionIcon
+                aria-label={t("github.ariaLabel")}
+                color="gray"
+                component="a"
+                href="https://github.com/tefra/stridex"
+                radius="md"
+                rel="noopener noreferrer"
+                size="lg"
+                target="_blank"
+                variant="subtle"
               >
-                <ActionIcon
-                  aria-label={t("github.ariaLabel")}
-                  color="gray"
-                  component="a"
-                  href="https://github.com/tefra/stridex"
-                  radius="md"
-                  rel="noopener noreferrer"
-                  size="lg"
-                  target="_blank"
-                  variant="subtle"
-                >
-                  <IconBrandGithub size={20} />
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip
-                withArrow
-                position="bottom"
-                label={
-                  colorScheme === "dark"
-                    ? t("theme.switchToLight")
-                    : t("theme.switchToDark")
-                }
+                <IconBrandGithub size={20} />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip
+              withArrow
+              position="bottom"
+              label={
+                colorScheme === "dark"
+                  ? t("theme.switchToLight")
+                  : t("theme.switchToDark")
+              }
+            >
+              <ActionIcon
+                c="gray"
+                onClick={() => toggleColorScheme()}
+                size="lg"
+                variant="subtle"
               >
-                <ActionIcon
-                  c="gray"
-                  onClick={() => toggleColorScheme()}
-                  size="lg"
-                  variant="subtle"
-                >
-                  {colorScheme === "dark" ? (
-                    <IconSun size={20} />
-                  ) : (
-                    <IconMoon size={20} />
-                  )}
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip
-                withArrow
-                label={t("nav.previousMonth")}
-                position="bottom"
-              >
-                <ActionIcon
-                  color="gray"
-                  onClick={goToPreviousMonth}
-                  size="md"
-                  variant="subtle"
-                >
-                  <IconChevronLeft size={18} />
-                </ActionIcon>
-              </Tooltip>
-              <Text
-                fw={700}
-                onClick={openMonthPicker}
+                {colorScheme === "dark" ? (
+                  <IconSun size={20} />
+                ) : (
+                  <IconMoon size={20} />
+                )}
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip withArrow label={t("nav.previousMonth")} position="bottom">
+              <ActionIcon
+                color="gray"
+                onClick={goToPreviousMonth}
                 size="md"
-                style={{ cursor: "pointer" }}
+                variant="subtle"
               >
-                {currentDateTime.format("MMM YYYY")}
-              </Text>
-              <Tooltip withArrow label={t("nav.nextMonth")} position="bottom">
-                <ActionIcon
-                  color="gray"
-                  onClick={goToNextMonth}
-                  size="md"
-                  variant="subtle"
-                >
-                  <IconChevronRight size={18} />
-                </ActionIcon>
-              </Tooltip>
-            </Group>
+                <IconChevronLeft size={18} />
+              </ActionIcon>
+            </Tooltip>
+            <Text
+              fw={700}
+              onClick={openMonthPicker}
+              size="md"
+              style={{ cursor: "pointer" }}
+            >
+              {currentDateTime.format("MMM YYYY")}
+            </Text>
+            <Tooltip withArrow label={t("nav.nextMonth")} position="bottom">
+              <ActionIcon
+                color="gray"
+                onClick={goToNextMonth}
+                size="md"
+                variant="subtle"
+              >
+                <IconChevronRight size={18} />
+              </ActionIcon>
+            </Tooltip>
           </Group>
         </Group>
       </AppShell.Header>
