@@ -51,9 +51,13 @@ const GoogleDriveButton: React.FC = () => {
     },
   });
 
-  if (!authToken) {
+  if (!authToken && !fileId) {
     color = "gray";
-    label = fileId ? t("drive.reauthenticate") : t("drive.connect");
+    label = t("drive.connect");
+    action = () => login();
+  } else if (!authToken) {
+    color = "orange";
+    label = t("drive.reauthenticate");
     action = () => login();
   } else if (!fileId) {
     color = "orange";
