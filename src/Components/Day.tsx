@@ -1,7 +1,8 @@
 import React from "react";
 
 import { useDroppable } from "@dnd-kit/core";
-import { Box, Paper, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Box, Group, Paper, Text, Tooltip } from "@mantine/core";
+import { IconPlus } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 
 import { openEditor } from "@/Components/Editor";
@@ -28,7 +29,7 @@ const Day: React.FC<Props> = ({ date, current }) => {
       key={key}
       ref={setNodeRef}
       withBorder
-      p="sm"
+      p={7}
       radius="md"
       style={{
         opacity: current ? 1 : 0.5,
@@ -40,24 +41,24 @@ const Day: React.FC<Props> = ({ date, current }) => {
         transition: "background-color 0.2s, border 0.2s",
       }}
     >
-      <Tooltip withArrow label={t("day.addWorkout")}>
-        <Text
-          c={isWeekend ? "red" : "default"}
-          fw={700}
-          size="md"
-          style={{ cursor: "pointer" }}
-          ta="right"
-          onClick={() =>
-            openEditor(
-              key,
-              { id: "", description: "", steps: [] },
-              t("editor.titleNew", { date: key })
-            )
-          }
-        >
+      <Group gap={0} justify="space-between">
+        <Tooltip withArrow label={t("day.addWorkout")}>
+          <ActionIcon c="blue" size={16} variant="subtle">
+            <IconPlus
+              onClick={() =>
+                openEditor(
+                  key,
+                  { id: "", description: "", steps: [] },
+                  t("editor.titleNew", { date: key })
+                )
+              }
+            />
+          </ActionIcon>
+        </Tooltip>
+        <Text c={isWeekend ? "red" : "default"} fw={700} size="md">
           {date.date()}
         </Text>
-      </Tooltip>
+      </Group>
       <Box mt="auto" pt="sm">
         {isOver ? (
           <Text c="blue.2" fw={700} size="md" ta="center">

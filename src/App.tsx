@@ -70,7 +70,7 @@ const App: React.FC = () => {
   return (
     <AppShell footer={{ height: 30 }} header={{ height: 60 }} padding="md">
       <AppShell.Header>
-        <Group justify="space-between" style={{ flex: 1 }}>
+        <Group justify="space-between" px={10} style={{ flex: 1 }}>
           <Title>{t("app.title")}</Title>
           <Group align="center" gap="xs" ml="xl" visibleFrom="sm">
             <GoogleDriveButton />
