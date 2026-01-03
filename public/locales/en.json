@@ -34,7 +34,7 @@
   "week": {
     "total": "Total",
     "easy": "Easy",
-    "speed": "Speed",
+    "hard": "Hard",
     "ratio": "Ratio",
     "delta": "Delta",
     "na": "N/A"

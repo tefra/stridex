@@ -7,9 +7,9 @@ import type { Dayjs } from "dayjs";
 interface Stats {
   total: number;
   easy: number;
-  speed: number;
+  hard: number;
   easyPercent: number;
-  speedPercent: number;
+  hardPercent: number;
 }
 
 const useStats = (days: Dayjs[]): Stats => {
@@ -17,15 +17,10 @@ const useStats = (days: Dayjs[]): Stats => {
 
   return useMemo(() => {
     const easyPaces = new Set(["warmup", "easy", "base", "cooldown"]);
-    const speedPaces = new Set([
-      "tempo",
-      "subthreshold",
-      "threshold",
-      "sprint",
-    ]);
+    const hardPaces = new Set(["tempo", "subthreshold", "threshold", "sprint"]);
     let total = 0;
     let easy = 0;
-    let speed = 0;
+    let hard = 0;
 
     days.forEach((day) => {
       const dateStr = day.format("YYYY-MM-DD");
@@ -42,22 +37,22 @@ const useStats = (days: Dayjs[]): Stats => {
           total += distance;
           if (easyPaces.has(step.pace)) {
             easy += distance;
-          } else if (speedPaces.has(step.pace)) {
-            speed += distance;
+          } else if (hardPaces.has(step.pace)) {
+            hard += distance;
           }
         });
       });
     });
 
     const easyPercent = total > 0 ? Math.round((easy / total) * 100) : 0;
-    const speedPercent = total > 0 ? 100 - easyPercent : 0;
+    const hardPercent = total > 0 ? 100 - easyPercent : 0;
 
     return {
       total,
       easy,
-      speed,
+      hard,
       easyPercent,
-      speedPercent,
+      hardPercent,
     };
   }, [days, getWorkouts]);
 };

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Group, Paper, SimpleGrid, Text } from "@mantine/core";
+import { Group, Paper, SimpleGrid, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 
 import Day from "@/Components/Day";
@@ -38,13 +38,13 @@ const Week: React.FC<Props> = ({ startDay, year, month }) => {
       color: "teal",
     },
     {
-      label: t("week.speed"),
-      value: `${stats.speed.toFixed(1)}km`,
+      label: t("week.hard"),
+      value: `${stats.hard.toFixed(1)}km`,
       color: "orange",
     },
     {
       label: t("week.ratio"),
-      value: `${stats.easyPercent.toFixed(0)}/${stats.speedPercent.toFixed(0)}`,
+      value: `${stats.easyPercent.toFixed(0)}/${stats.hardPercent.toFixed(0)}`,
       color: stats.easyPercent < 80 ? "yellow" : "green",
     },
     {
@@ -70,27 +70,20 @@ const Week: React.FC<Props> = ({ startDay, year, month }) => {
         radius="md"
         style={{
           minHeight: 120,
-          alignItems: "center",
           display: "flex",
-          justifyContent: "flex-end",
+          flexDirection: "column",
         }}
       >
-        <Box>
-          {summaries.map((item) => (
-            <Group key={item.label} justify="space-between" wrap="nowrap">
-              <Text
-                fw={600}
-                size="sm"
-                style={{ minWidth: 50, textAlign: "right" }}
-              >
-                {item.label}:
-              </Text>
-              <Text c={item.color} fw={700} size="sm" ta="left">
-                {item.value}
-              </Text>
-            </Group>
-          ))}
-        </Box>
+        {summaries.map((item) => (
+          <Group key={item.label} justify="space-between">
+            <Text fw={600} size="sm" ta="right">
+              {item.label}:
+            </Text>
+            <Text c={item.color} fw={700} size="sm" ta="left">
+              {item.value}
+            </Text>
+          </Group>
+        ))}
       </Paper>
     </SimpleGrid>
   );
