@@ -97,8 +97,8 @@
     }
   },
   "units": {
-    "sec": "seconds",
-    "km": "kilometers",
-    "m": "meters"
+    "sec": "Seconds",
+    "km": "Kilometers",
+    "m": "Meters"
   }
 }

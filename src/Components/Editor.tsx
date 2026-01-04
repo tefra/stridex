@@ -3,16 +3,17 @@ import React from "react";
 import {
   ActionIcon,
   Button,
+  Collapse,
   Fieldset,
-  Grid,
   Group,
-  Input,
   NumberInput,
   SegmentedControl,
   Select,
   Stack,
   Switch,
+  Text,
   TextInput,
+  Title,
   Tooltip,
 } from "@mantine/core";
 import { TimePicker } from "@mantine/dates";
@@ -48,6 +49,18 @@ export const Editor: React.FC<EditorProps> = ({
     validate: zod4Resolver(WorkoutSchema),
     validateInputOnChange: true,
     validateInputOnBlur: true,
+    onValuesChange: (values) => {
+      values.steps.forEach((step, index) => {
+        if (step.repetitions === 1) {
+          form.setFieldValue(`steps.${index}.recoveryValue`, 0);
+          form.setFieldValue(`steps.${index}.recoveryUnit`, "sec");
+          form.setFieldValue(`steps.${index}.skipLastRecovery`, false);
+        }
+        if (step.recoveryValue === 0) {
+          form.setFieldValue(`steps.${index}.skipLastRecovery`, false);
+        }
+      });
+    },
   });
 
   const addStep = () => {
@@ -84,65 +97,82 @@ export const Editor: React.FC<EditorProps> = ({
         <Fieldset
           // eslint-disable-next-line react/no-array-index-key
           key={index}
-          legend={t("editor.stepLegend", { number: index + 1 })}
           radius="sm"
+          legend={
+            <Group
+              gap="xs"
+              justify="space-between"
+              style={{ width: "100%" }}
+              wrap="nowrap"
+            >
+              <Text fw={500} size="sm">
+                {t("editor.stepLegend", { number: index + 1 })}
+              </Text>
+              <Tooltip label={t("editor.removeStep")}>
+                <ActionIcon
+                  color="red"
+                  onClick={() => form.removeListItem("steps", index)}
+                  size="sm"
+                  variant="subtle"
+                >
+                  <IconX size={16} />
+                </ActionIcon>
+              </Tooltip>
+            </Group>
+          }
         >
-          <Grid align="end" gutter="md">
-            <Grid.Col span={6}>
-              <Input.Wrapper label={t("editor.duration")}>
-                <Group grow align="start" gap="xs">
-                  <SegmentedControl
-                    size="sm"
-                    value={step.durationUnit === "sec" ? "time" : "distance"}
-                    data={[
-                      { label: t("editor.time"), value: "time" },
-                      { label: t("editor.distance"), value: "distance" },
-                    ]}
-                    onChange={(value) => {
-                      form.setFieldValue(
-                        `steps.${index}.durationUnit`,
-                        value === "time" ? "sec" : "km"
-                      );
-                      form.setFieldValue(
-                        `steps.${index}.durationValue`,
-                        value === "time" ? 2700 : 10
-                      );
-                    }}
-                  />
-                  {step.durationUnit === "sec" ? (
-                    <TimePicker
-                      clearable
-                      withDropdown
-                      withSeconds
-                      hoursStep={1}
-                      minutesStep={5}
-                      secondsStep={5}
-                      value={formatDurationDisplay(step.durationValue)}
-                      onChange={(value) => {
-                        const seconds = parseDurationInput(value);
-                        form.setFieldValue(
-                          `steps.${index}.durationValue`,
-                          seconds
-                        );
-                      }}
-                    />
-                  ) : (
-                    <Group grow align="end" gap="xs">
-                      <NumberInput
-                        min={0.01}
-                        step={1.0}
-                        {...form.getInputProps(`steps.${index}.durationValue`)}
-                      />
-                      <Select
-                        data={["mi", "km", "m"]}
-                        {...form.getInputProps(`steps.${index}.durationUnit`)}
-                      />
-                    </Group>
-                  )}
-                </Group>
-              </Input.Wrapper>
-            </Grid.Col>
-            <Grid.Col span={4}>
+          <Stack gap="xs">
+            <Title order={6}>{t("editor.duration")}</Title>
+            <SegmentedControl
+              size="sm"
+              value={step.durationUnit === "sec" ? "time" : "distance"}
+              data={[
+                { label: t("editor.time"), value: "time" },
+                { label: t("editor.distance"), value: "distance" },
+              ]}
+              onChange={(value) => {
+                form.setFieldValue(
+                  `steps.${index}.durationUnit`,
+                  value === "time" ? "sec" : "km"
+                );
+                form.setFieldValue(
+                  `steps.${index}.durationValue`,
+                  value === "time" ? 2700 : 10
+                );
+              }}
+            />
+            {step.durationUnit === "sec" ? (
+              <TimePicker
+                clearable
+                withDropdown
+                withSeconds
+                hoursStep={1}
+                minutesStep={5}
+                secondsStep={5}
+                value={formatDurationDisplay(step.durationValue)}
+                onChange={(value) => {
+                  const seconds = parseDurationInput(value);
+                  form.setFieldValue(`steps.${index}.durationValue`, seconds);
+                }}
+              />
+            ) : (
+              <Group grow align="end" gap="xs">
+                <NumberInput
+                  min={0.01}
+                  step={1.0}
+                  {...form.getInputProps(`steps.${index}.durationValue`)}
+                />
+                <Select
+                  allowDeselect={false}
+                  data={[
+                    { value: "km", label: t("units.km") },
+                    { value: "m", label: t("units.m") },
+                  ]}
+                  {...form.getInputProps(`steps.${index}.durationUnit`)}
+                />
+              </Group>
+            )}
+            <Group grow align="end" gap="xs">
               <Select
                 allowDeselect={false}
                 label={t("editor.pace")}
@@ -152,93 +182,72 @@ export const Editor: React.FC<EditorProps> = ({
                 }))}
                 {...form.getInputProps(`steps.${index}.pace`)}
               />
-            </Grid.Col>
-            <Grid.Col span={2}>
               <NumberInput
                 label={t("editor.reps")}
                 min={1}
                 {...form.getInputProps(`steps.${index}.repetitions`)}
               />
-            </Grid.Col>
-          </Grid>
-          <Grid align="end" gutter="md">
-            <Grid.Col span={6}>
-              <Input.Wrapper label={t("editor.recovery")}>
-                <Group grow align="start" gap="xs">
-                  <SegmentedControl
-                    size="sm"
-                    value={step.recoveryUnit === "sec" ? "time" : "distance"}
-                    data={[
-                      { label: t("editor.time"), value: "time" },
-                      { label: t("editor.distance"), value: "distance" },
-                    ]}
-                    onChange={(value) => {
-                      form.setFieldValue(
-                        `steps.${index}.recoveryUnit`,
-                        value === "time" ? "sec" : "km"
-                      );
-                      form.setFieldValue(
-                        `steps.${index}.recoveryValue`,
-                        value === "time" ? 60 : 1
-                      );
-                    }}
+            </Group>
+          </Stack>
+          <Collapse in={step.repetitions > 1}>
+            <Stack gap="xs" mt="xl">
+              <Title order={6}>{t("editor.recovery")}</Title>
+              <SegmentedControl
+                size="sm"
+                value={step.recoveryUnit === "sec" ? "time" : "distance"}
+                data={[
+                  { label: t("editor.time"), value: "time" },
+                  { label: t("editor.distance"), value: "distance" },
+                ]}
+                onChange={(value) => {
+                  form.setFieldValue(
+                    `steps.${index}.recoveryUnit`,
+                    value === "time" ? "sec" : "km"
+                  );
+                  form.setFieldValue(`steps.${index}.recoveryValue`, 0);
+                }}
+              />
+              {step.recoveryUnit === "sec" ? (
+                <TimePicker
+                  clearable
+                  withDropdown
+                  withSeconds
+                  hoursStep={1}
+                  minutesStep={5}
+                  secondsStep={5}
+                  value={formatDurationDisplay(step.recoveryValue)}
+                  onChange={(value) => {
+                    const seconds = parseDurationInput(value);
+                    form.setFieldValue(`steps.${index}.recoveryValue`, seconds);
+                  }}
+                />
+              ) : (
+                <Group grow align="end" gap="xs">
+                  <NumberInput
+                    min={0.01}
+                    step={1.0}
+                    {...form.getInputProps(`steps.${index}.recoveryValue`)}
                   />
-                  {step.recoveryUnit === "sec" ? (
-                    <TimePicker
-                      clearable
-                      withDropdown
-                      withSeconds
-                      hoursStep={1}
-                      minutesStep={1}
-                      secondsStep={5}
-                      value={formatDurationDisplay(step.recoveryValue)}
-                      onChange={(value) => {
-                        const seconds = parseDurationInput(value);
-                        form.setFieldValue(
-                          `steps.${index}.recoveryValue`,
-                          seconds
-                        );
-                      }}
-                    />
-                  ) : (
-                    <Group grow align="end" gap="xs">
-                      <NumberInput
-                        min={0.01}
-                        step={0.1}
-                        {...form.getInputProps(`steps.${index}.recoveryValue`)}
-                      />
-                      <Select
-                        data={["mi", "km", "m"]}
-                        {...form.getInputProps(`steps.${index}.recoveryUnit`)}
-                      />
-                    </Group>
-                  )}
+                  <Select
+                    allowDeselect={false}
+                    data={[
+                      { value: "km", label: t("units.km") },
+                      { value: "m", label: t("units.m") },
+                    ]}
+                    {...form.getInputProps(`steps.${index}.recoveryUnit`)}
+                  />
                 </Group>
-              </Input.Wrapper>
-            </Grid.Col>
-            <Grid.Col span={4}>
+              )}
               <Switch
-                disabled={step.repetitions === 1}
+                disabled={step.recoveryValue === 0}
                 label={t("editor.skipLastRecovery")}
                 mb={5}
                 {...form.getInputProps(`steps.${index}.skipLastRecovery`, {
                   type: "checkbox",
                 })}
               />
-            </Grid.Col>
-            <Grid.Col span={2} ta="right">
-              <Tooltip label={t("editor.removeStep")}>
-                <ActionIcon
-                  color="red"
-                  onClick={() => form.removeListItem("steps", index)}
-                  size="sm"
-                  variant="subtle"
-                >
-                  <IconX size={20} />
-                </ActionIcon>
-              </Tooltip>
-            </Grid.Col>
-          </Grid>
+            </Stack>
+          </Collapse>
         </Fieldset>
       ))}
       <Button
