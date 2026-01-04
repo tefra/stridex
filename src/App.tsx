@@ -51,20 +51,34 @@ const App: React.FC = () => {
   };
 
   return (
-    <AppShell footer={{ height: 30 }} header={{ height: 60 }} padding="md">
+    <AppShell
+      footer={{ height: 30 }}
+      header={{ height: { base: 120, sm: 60 } }}
+      padding="md"
+    >
       <AppShell.Header>
-        <Group justify="space-between" px={10} style={{ flex: 1 }}>
+        <Group justify="space-between" m="sm">
           <Title>{t("app.title")}</Title>
-          <Group align="center" gap="xs" ml="xl" visibleFrom="sm">
+          <Group align="center" gap="sm">
             <GoogleDriveButton />
             <Tooltip label={t("backup.import")}>
-              <ActionIcon color="gray" onClick={fromJson} variant="subtle">
-                <IconUpload size={20} />
+              <ActionIcon
+                color="gray"
+                onClick={fromJson}
+                size="sm"
+                variant="subtle"
+              >
+                <IconUpload />
               </ActionIcon>
             </Tooltip>
             <Tooltip label={t("backup.export")}>
-              <ActionIcon color="gray" onClick={toJson} variant="subtle">
-                <IconDownload size={20} />
+              <ActionIcon
+                color="gray"
+                onClick={toJson}
+                size="sm"
+                variant="subtle"
+              >
+                <IconDownload />
               </ActionIcon>
             </Tooltip>
             <Tooltip withArrow label={t("github.viewSource")} position="bottom">
@@ -75,11 +89,11 @@ const App: React.FC = () => {
                 href="https://github.com/tefra/stridex"
                 radius="md"
                 rel="noopener noreferrer"
-                size="lg"
+                size="sm"
                 target="_blank"
                 variant="subtle"
               >
-                <IconBrandGithub size={20} />
+                <IconBrandGithub />
               </ActionIcon>
             </Tooltip>
             <Tooltip
@@ -94,18 +108,15 @@ const App: React.FC = () => {
               <ActionIcon
                 c="gray"
                 onClick={() => toggleColorScheme()}
-                size="lg"
+                size="sm"
                 variant="subtle"
               >
-                {colorScheme === "dark" ? (
-                  <IconSun size={20} />
-                ) : (
-                  <IconMoon size={20} />
-                )}
+                {colorScheme === "dark" ? <IconSun /> : <IconMoon />}
               </ActionIcon>
             </Tooltip>
             <Popover
               withArrow
+              onChange={setMonthPickerOpened}
               opened={monthPickerOpened}
               shadow="md"
               width="auto"
@@ -123,12 +134,13 @@ const App: React.FC = () => {
                       size="sm"
                       variant="transparent"
                     >
-                      <IconChevronLeft size={18} />
+                      <IconChevronLeft />
                     </ActionIcon>
                   </Tooltip>
                   <Button
                     c="gray"
                     onClick={() => setMonthPickerOpened((o) => !o)}
+                    px={5}
                     size="sm"
                     variant="transparent"
                   >
@@ -145,7 +157,7 @@ const App: React.FC = () => {
                       size="sm"
                       variant="transparent"
                     >
-                      <IconChevronRight size={18} />
+                      <IconChevronRight />
                     </ActionIcon>
                   </Tooltip>
                 </Group>
@@ -158,6 +170,7 @@ const App: React.FC = () => {
                   onChange={(value) => {
                     if (value) {
                       setCurrentDateTime(dayjs(value));
+                      setMonthPickerOpened(false);
                     }
                   }}
                 />

@@ -90,8 +90,8 @@ const GoogleDriveButton: React.FC = () => {
   return (
     <React.Fragment>
       <Tooltip label={label}>
-        <ActionIcon color={color} onClick={action} variant="subtle">
-          <IconBrandGoogleDrive size={20} />
+        <ActionIcon color={color} onClick={action} size="sm" variant="subtle">
+          <IconBrandGoogleDrive />
         </ActionIcon>
       </Tooltip>
 
