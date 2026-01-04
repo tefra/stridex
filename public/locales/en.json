@@ -32,6 +32,7 @@
     "dropToCopy": "Drop to copy"
   },
   "week": {
+    "summary": "Summary",
     "total": "Total",
     "easy": "Easy",
     "hard": "Hard",

@@ -1,7 +1,15 @@
 import React from "react";
 
 import { useDroppable } from "@dnd-kit/core";
-import { ActionIcon, Box, Group, Paper, Text, Tooltip } from "@mantine/core";
+import {
+  ActionIcon,
+  Box,
+  Group,
+  Paper,
+  Text,
+  Tooltip,
+  useMatches,
+} from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 
@@ -18,6 +26,7 @@ interface Props {
 const Day: React.FC<Props> = ({ date, current }) => {
   const { t } = useTranslation();
   const key = date.format("YYYY-MM-DD");
+  const dayFormat = useMatches({ base: "ddd D", sm: "D" });
   const isWeekend = date.day() === 0 || date.day() === 6;
   const { setNodeRef, isOver } = useDroppable({
     id: key,
@@ -56,7 +65,7 @@ const Day: React.FC<Props> = ({ date, current }) => {
           </ActionIcon>
         </Tooltip>
         <Text c={isWeekend ? "red" : "default"} fw={700} size="md">
-          {date.date()}
+          {date.format(dayFormat)}
         </Text>
       </Group>
       <Box mt="auto" pt="sm">

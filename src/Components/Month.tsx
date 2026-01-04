@@ -48,7 +48,7 @@ const Month: React.FC<Props> = ({ month, year }) => {
     dayjs().weekday(5).format("dddd"),
     dayjs().weekday(6).format("dddd"),
     dayjs().weekday(7).format("dddd"),
-    t("week.total"),
+    t("week.summary"),
   ];
 
   const onDragEnd = (event: DragEndEvent): void => {
@@ -71,7 +71,7 @@ const Month: React.FC<Props> = ({ month, year }) => {
   return (
     <DndContext collisionDetection={closestCorners} onDragEnd={onDragEnd}>
       <Box p={0}>
-        <SimpleGrid cols={8} mb="xs" spacing="xs">
+        <SimpleGrid cols={8} mb="xs" spacing="xs" visibleFrom="sm">
           {headers.map((name, index) => (
             <Text
               key={name}

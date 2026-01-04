@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Group, Paper, SimpleGrid, Text } from "@mantine/core";
+import { Group, Paper, SimpleGrid, Stack, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 
 import Day from "@/Components/Day";
@@ -56,7 +56,7 @@ const Week: React.FC<Props> = ({ startDay, year, month }) => {
   ];
 
   return (
-    <SimpleGrid cols={8} mb="lg" spacing="xs">
+    <SimpleGrid cols={{ base: 1, sm: 8 }} mb="lg" spacing="xs">
       {days.map((day) => (
         <Day
           key={day.format("YYYY-MM-DD")}
@@ -74,16 +74,21 @@ const Week: React.FC<Props> = ({ startDay, year, month }) => {
           flexDirection: "column",
         }}
       >
-        {summaries.map((item) => (
-          <Group key={item.label} justify="space-between">
-            <Text fw={600} size="sm" ta="right">
-              {item.label}:
-            </Text>
-            <Text c={item.color} fw={700} size="sm" ta="left">
-              {item.value}
-            </Text>
-          </Group>
-        ))}
+        <Stack gap={0}>
+          <Text c="dimmed" fw={700} hiddenFrom="sm" mb="xs" size="sm">
+            {t("week.summary")}
+          </Text>
+          {summaries.map((item) => (
+            <Group key={item.label} justify="space-between">
+              <Text fw={600} size="sm" ta="right">
+                {item.label}:
+              </Text>
+              <Text c={item.color} fw={700} size="sm" ta="left">
+                {item.value}
+              </Text>
+            </Group>
+          ))}
+        </Stack>
       </Paper>
     </SimpleGrid>
   );
