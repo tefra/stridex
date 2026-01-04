@@ -4,14 +4,15 @@ import {
   ActionIcon,
   Anchor,
   AppShell,
+  Button,
   Group,
+  Popover,
   Text,
   Title,
   Tooltip,
   useMantineColorScheme,
 } from "@mantine/core";
 import { MonthPicker } from "@mantine/dates";
-import { modals } from "@mantine/modals";
 import {
   IconBrandGithub,
   IconChevronLeft,
@@ -37,33 +38,15 @@ const App: React.FC = () => {
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [currentDateTime, setCurrentDateTime] = useState<Dayjs>(dayjs());
-
-  const openMonthPicker = () => {
-    modals.open({
-      withCloseButton: false,
-      size: "auto",
-      key: currentDateTime.format("YYYY-MM"),
-      children: (
-        <MonthPicker
-          allowDeselect={false}
-          defaultDate={currentDateTime.toDate()}
-          value={currentDateTime.toDate()}
-          onChange={(value) => {
-            if (value) {
-              setCurrentDateTime(dayjs(value));
-              modals.closeAll();
-            }
-          }}
-        />
-      ),
-    });
-  };
+  const [monthPickerOpened, setMonthPickerOpened] = useState(false);
 
   const goToPreviousMonth = () => {
+    setMonthPickerOpened(false);
     setCurrentDateTime((prev) => prev.subtract(1, "month"));
   };
 
   const goToNextMonth = () => {
+    setMonthPickerOpened(false);
     setCurrentDateTime((prev) => prev.add(1, "month"));
   };
 
@@ -121,34 +104,65 @@ const App: React.FC = () => {
                 )}
               </ActionIcon>
             </Tooltip>
-            <Tooltip withArrow label={t("nav.previousMonth")} position="bottom">
-              <ActionIcon
-                color="gray"
-                onClick={goToPreviousMonth}
-                size="md"
-                variant="subtle"
-              >
-                <IconChevronLeft size={18} />
-              </ActionIcon>
-            </Tooltip>
-            <Text
-              fw={700}
-              onClick={openMonthPicker}
-              size="md"
-              style={{ cursor: "pointer" }}
+            <Popover
+              withArrow
+              opened={monthPickerOpened}
+              shadow="md"
+              width="auto"
             >
-              {currentDateTime.format("MMM YYYY")}
-            </Text>
-            <Tooltip withArrow label={t("nav.nextMonth")} position="bottom">
-              <ActionIcon
-                color="gray"
-                onClick={goToNextMonth}
-                size="md"
-                variant="subtle"
-              >
-                <IconChevronRight size={18} />
-              </ActionIcon>
-            </Tooltip>
+              <Popover.Target>
+                <Group gap={0}>
+                  <Tooltip
+                    withArrow
+                    label={t("nav.previousMonth")}
+                    position="bottom"
+                  >
+                    <ActionIcon
+                      c="gray"
+                      onClick={goToPreviousMonth}
+                      size="sm"
+                      variant="transparent"
+                    >
+                      <IconChevronLeft size={18} />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Button
+                    c="gray"
+                    onClick={() => setMonthPickerOpened((o) => !o)}
+                    size="sm"
+                    variant="transparent"
+                  >
+                    {currentDateTime.format("MMM YYYY")}
+                  </Button>
+                  <Tooltip
+                    withArrow
+                    label={t("nav.nextMonth")}
+                    position="bottom"
+                  >
+                    <ActionIcon
+                      c="gray"
+                      onClick={goToNextMonth}
+                      size="sm"
+                      variant="transparent"
+                    >
+                      <IconChevronRight size={18} />
+                    </ActionIcon>
+                  </Tooltip>
+                </Group>
+              </Popover.Target>
+              <Popover.Dropdown>
+                <MonthPicker
+                  allowDeselect={false}
+                  defaultDate={currentDateTime.toDate()}
+                  value={currentDateTime.toDate()}
+                  onChange={(value) => {
+                    if (value) {
+                      setCurrentDateTime(dayjs(value));
+                    }
+                  }}
+                />
+              </Popover.Dropdown>
+            </Popover>
           </Group>
         </Group>
       </AppShell.Header>
