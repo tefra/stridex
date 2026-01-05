@@ -165,8 +165,8 @@ export const Editor: React.FC<EditorProps> = ({
                 <Select
                   allowDeselect={false}
                   data={[
-                    { value: "km", label: t("units.km") },
-                    { value: "m", label: t("units.m") },
+                    { value: "km", label: t("units.km.label") },
+                    { value: "m", label: t("units.m.label") },
                   ]}
                   {...form.getInputProps(`steps.${index}.durationUnit`)}
                 />
@@ -231,8 +231,8 @@ export const Editor: React.FC<EditorProps> = ({
                   <Select
                     allowDeselect={false}
                     data={[
-                      { value: "km", label: t("units.km") },
-                      { value: "m", label: t("units.m") },
+                      { value: "km", label: t("units.km.label") },
+                      { value: "m", label: t("units.m.label") },
                     ]}
                     {...form.getInputProps(`steps.${index}.recoveryUnit`)}
                   />

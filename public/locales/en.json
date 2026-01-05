@@ -96,8 +96,17 @@
     }
   },
   "units": {
-    "sec": "Seconds",
-    "km": "Kilometers",
-    "m": "Meters"
+    "sec": {
+      "label": "Seconds",
+      "abbr": "sec"
+    },
+    "km": {
+      "label": "Kilometers",
+      "abbr": "km"
+    },
+    "m": {
+      "label": "Meters",
+      "abbr": "m"
+    }
   }
 }
