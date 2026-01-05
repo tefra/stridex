@@ -5,6 +5,8 @@ import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import { ModalsProvider } from "@mantine/modals";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import "dayjs/locale/el";
+import "dayjs/locale/en";
 import { createRoot } from "react-dom/client";
 
 import { GOOGLE_CLIENT_ID } from "@/config";

@@ -3,21 +3,24 @@ import React, { useState } from "react";
 import {
   ActionIcon,
   Anchor,
-  AppShell,
   Button,
+  Container,
+  Divider,
   Group,
+  Menu,
   Popover,
   Text,
   Title,
   Tooltip,
   useMantineColorScheme,
 } from "@mantine/core";
-import { MonthPicker } from "@mantine/dates";
+import { DatesProvider, MonthPicker } from "@mantine/dates";
 import {
   IconBrandGithub,
   IconChevronLeft,
   IconChevronRight,
   IconDownload,
+  IconLanguage,
   IconMoon,
   IconSun,
   IconUpload,
@@ -28,17 +31,24 @@ import { useTranslation } from "react-i18next";
 import GoogleDriveButton from "@/Components/GoogleDriveButton";
 import Month from "@/Components/Month";
 import useAutoSync from "@/hooks/useAutoSync";
+import { supportedLanguages } from "@/i18n";
 import { fromJson, toJson } from "@/utils/localDataSync";
 
 import type { Dayjs } from "dayjs";
 
 const App: React.FC = () => {
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
+  const locale = i18n.resolvedLanguage ?? "en";
+  dayjs.locale(locale);
   useAutoSync();
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [currentDateTime, setCurrentDateTime] = useState<Dayjs>(dayjs());
   const [monthPickerOpened, setMonthPickerOpened] = useState(false);
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
 
   const goToPreviousMonth = () => {
     setMonthPickerOpened(false);
@@ -51,13 +61,9 @@ const App: React.FC = () => {
   };
 
   return (
-    <AppShell
-      footer={{ height: 30 }}
-      header={{ height: { base: 120, sm: 60 } }}
-      padding="md"
-    >
-      <AppShell.Header>
-        <Group justify="space-between" m="sm">
+    <DatesProvider settings={{ locale }}>
+      <Container m={0} p={0} size="xl" strategy="block">
+        <Group justify="space-between" m="sm" wrap="wrap">
           <Title>{t("app.title")}</Title>
           <Group align="center" gap="sm">
             <GoogleDriveButton />
@@ -83,7 +89,6 @@ const App: React.FC = () => {
             </Tooltip>
             <Tooltip withArrow label={t("github.viewSource")} position="bottom">
               <ActionIcon
-                aria-label={t("github.ariaLabel")}
                 color="gray"
                 component="a"
                 href="https://github.com/tefra/stridex"
@@ -114,6 +119,30 @@ const App: React.FC = () => {
                 {colorScheme === "dark" ? <IconSun /> : <IconMoon />}
               </ActionIcon>
             </Tooltip>
+            <Menu shadow="md">
+              <Menu.Target>
+                <ActionIcon c="gray" size="sm" variant="subtle">
+                  <IconLanguage />
+                </ActionIcon>
+              </Menu.Target>
+
+              <Menu.Dropdown>
+                {supportedLanguages.map((lng) => {
+                  const isCurrent = locale.startsWith(lng);
+
+                  return (
+                    <Menu.Item
+                      key={lng}
+                      c={isCurrent ? "blue" : undefined}
+                      onClick={() => changeLanguage(lng)}
+                      style={{ fontWeight: isCurrent ? 600 : 400 }}
+                    >
+                      {lng.toUpperCase()}
+                    </Menu.Item>
+                  );
+                })}
+              </Menu.Dropdown>
+            </Menu>
             <Popover
               withArrow
               onChange={setMonthPickerOpened}
@@ -144,7 +173,7 @@ const App: React.FC = () => {
                     size="sm"
                     variant="transparent"
                   >
-                    {currentDateTime.format("MMM YYYY")}
+                    {currentDateTime.locale(locale).format("MMM YYYY")}
                   </Button>
                   <Tooltip
                     withArrow
@@ -178,27 +207,26 @@ const App: React.FC = () => {
             </Popover>
           </Group>
         </Group>
-      </AppShell.Header>
-      <AppShell.Main>
+      </Container>
+      <Divider my="md" />
+      <Container mt="md" p="sm" size="xl">
         <Month month={currentDateTime.month()} year={currentDateTime.year()} />
-      </AppShell.Main>
-      <AppShell.Footer ta="center">
-        <Group align="center" h="100%" justify="center" px="md">
-          <Text c="dimmed" size="xs">
-            {t("footer.tagline")}{" "}
-            <Anchor
-              c="dimmed"
-              href="https://github.com/tefra/stridex"
-              rel="noopener noreferrer"
-              size="xs"
-              target="_blank"
-            >
-              tefra/stridex
-            </Anchor>
-          </Text>
-        </Group>
-      </AppShell.Footer>
-    </AppShell>
+      </Container>
+      <Container m={0} p="sm" size="xl">
+        <Text c="dimmed" size="xs" ta="center">
+          {t("footer.tagline")}{" "}
+          <Anchor
+            c="dimmed"
+            href="https://github.com/tefra/stridex"
+            rel="noopener noreferrer"
+            size="xs"
+            target="_blank"
+          >
+            tefra/stridex
+          </Anchor>
+        </Text>
+      </Container>
+    </DatesProvider>
   );
 };
 

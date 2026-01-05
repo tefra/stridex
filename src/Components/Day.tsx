@@ -24,7 +24,9 @@ interface Props {
 }
 
 const Day: React.FC<Props> = ({ date, current }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage ?? "en";
+
   const key = date.format("YYYY-MM-DD");
   const dayFormat = useMatches({ base: "ddd D", sm: "D" });
   const isWeekend = date.day() === 0 || date.day() === 6;
@@ -64,7 +66,7 @@ const Day: React.FC<Props> = ({ date, current }) => {
           </ActionIcon>
         </Tooltip>
         <Text c={isWeekend ? "red" : "default"} fw={700} size="md">
-          {date.format(dayFormat)}
+          {date.locale(locale).format(dayFormat)}
         </Text>
       </Group>
       <Box hidden={!isOver} mt="auto" pt="sm">

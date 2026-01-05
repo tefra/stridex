@@ -7,8 +7,7 @@
     "export": "Export backup"
   },
   "github": {
-    "viewSource": "View source on GitHub",
-    "ariaLabel": "GitHub repository"
+    "viewSource": "View source on GitHub"
   },
   "theme": {
     "switchToLight": "Switch to light mode",

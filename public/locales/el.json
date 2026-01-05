@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "StrideX"
+  },
+  "backup": {
+    "import": "Εισαγωγή αντιγράφου ασφαλείας",
+    "export": "Εξαγωγή αντιγράφου ασφαλείας"
+  },
+  "github": {
+    "viewSource": "Προβολή πηγαίου κώδικα στο GitHub"
+  },
+  "theme": {
+    "switchToLight": "Μετάβαση σε φωτεινή λειτουργία",
+    "switchToDark": "Μετάβαση σε σκοτεινή λειτουργία"
+  },
+  "nav": {
+    "previousMonth": "Προηγούμενος μήνας",
+    "nextMonth": "Επόμενος μήνας"
+  },
+  "footer": {
+    "tagline": "Σχεδιάστε τα βήματά σας ×"
+  },
+  "drive": {
+    "connect": "Συγχρονισμός με το Google Drive",
+    "reauthenticate": "Η συνεδρία έληξε – Κάντε κλικ για επαναπιστοποίηση με το Google Drive",
+    "selectFileOrFolder": "Εξουσιοδοτημένο – Επιλέξτε αρχείο ή φάκελο για συγχρονισμό",
+    "synced": "Αυτόματος συγχρονισμός ενεργός – Κάντε κλικ για αποσύνδεση"
+  },
+  "day": {
+    "addWorkout": "Προσθήκη προπόνησης",
+    "dropToCopy": "Ρίξτε για αντιγραφή"
+  },
+  "week": {
+    "summary": "Σύνοψη",
+    "total": "Σύνολο",
+    "easy": "Εύκολο",
+    "hard": "Σκληρό",
+    "ratio": "Αναλογία",
+    "delta": "Διαφορά",
+    "na": "Μ/Δ"
+  },
+  "editor": {
+    "stepLegend": "Βήμα {{number}}",
+    "duration": "Διάρκεια",
+    "time": "Χρόνος",
+    "distance": "Απόσταση",
+    "pace": "Ρυθμός",
+    "reps": "Επαναλήψεις",
+    "recovery": "Ανάκαμψη",
+    "skipLastRecovery": "Παράλειψη τελευταίας ανάκαμψης",
+    "removeStep": "Αφαίρεση βήματος",
+    "addStep": "Προσθήκη βήματος",
+    "description": "Περιγραφή",
+    "generate": "Δημιουργία",
+    "cancel": "Ακύρωση",
+    "delete": "Διαγραφή",
+    "save": "Αποθήκευση",
+    "titleEdit": "Προπόνηση: {{date}} - {{index}}",
+    "titleNew": "Νέα προπόνηση: {{date}}"
+  },
+  "formatting": {
+    "skipLast": " (παράλειψη τελευταίας)"
+  },
+  "paces": {
+    "warmup": {
+      "label": "Προθέρμανση",
+      "abbr": "ΠΘ"
+    },
+    "easy": {
+      "label": "Εύκολο",
+      "abbr": "ΕΥ"
+    },
+    "base": {
+      "label": "Βάση",
+      "abbr": "Β"
+    },
+    "tempo": {
+      "label": "Τέμπο",
+      "abbr": "Τ"
+    },
+    "subthreshold": {
+      "label": "Υποκατώφλι",
+      "abbr": "ΥΚ"
+    },
+    "threshold": {
+      "label": "Κατώφλι",
+      "abbr": "Κ"
+    },
+    "sprint": {
+      "label": "Σπριντ",
+      "abbr": "Σ"
+    },
+    "cooldown": {
+      "label": "Αποθεραπεία",
+      "abbr": "ΑΠ"
+    }
+  },
+  "units": {
+    "sec": "Δευτερόλεπτα",
+    "km": "Χιλιόμετρα",
+    "m": "Μέτρα"
+  }
+}
