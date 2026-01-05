@@ -69,7 +69,6 @@ const Week: React.FC<Props> = ({ startDay, year, month }) => {
         p="sm"
         radius="md"
         style={{
-          minHeight: 120,
           display: "flex",
           flexDirection: "column",
         }}
@@ -79,7 +78,7 @@ const Week: React.FC<Props> = ({ startDay, year, month }) => {
             {t("week.summary")}
           </Text>
           {summaries.map((item) => (
-            <Group key={item.label} justify="space-between">
+            <Group key={item.label} gap={4} justify="space-between">
               <Text fw={600} size="sm" ta="right">
                 {item.label}:
               </Text>

@@ -42,7 +42,6 @@ const Day: React.FC<Props> = ({ date, current }) => {
       radius="md"
       style={{
         opacity: current ? 1 : 0.5,
-        minHeight: 120,
         display: "flex",
         flexDirection: "column",
         borderStyle: isOver ? "dashed" : "solid",
@@ -68,14 +67,13 @@ const Day: React.FC<Props> = ({ date, current }) => {
           {date.format(dayFormat)}
         </Text>
       </Group>
-      <Box mt="auto" pt="sm">
-        {isOver ? (
-          <Text c="blue.2" fw={700} size="md" ta="center">
-            {t("day.dropToCopy")}
-          </Text>
-        ) : (
-          <Workouts date={key} />
-        )}
+      <Box hidden={!isOver} mt="auto" pt="sm">
+        <Text c="blue.2" fw={700} size="md" ta="center">
+          {t("day.dropToCopy")}
+        </Text>
+      </Box>
+      <Box hidden={isOver} mt="auto" pt="sm">
+        <Workouts date={key} />
       </Box>
     </Paper>
   );

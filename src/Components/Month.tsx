@@ -1,6 +1,14 @@
 import React, { useMemo } from "react";
 
-import { closestCorners, DndContext, DragOverlay } from "@dnd-kit/core";
+import {
+  closestCorners,
+  DndContext,
+  DragOverlay,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { Box, SimpleGrid, Text } from "@mantine/core";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
@@ -26,6 +34,7 @@ interface Props {
 const Month: React.FC<Props> = ({ month, year }) => {
   const { t } = useTranslation();
   const { saveWorkout, reorderWorkouts } = useWorkoutStore();
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
   const mondays = useMemo(() => {
     const startOfMonth = dayjs().year(year).month(month).startOf("month");
@@ -69,7 +78,11 @@ const Month: React.FC<Props> = ({ month, year }) => {
   };
 
   return (
-    <DndContext collisionDetection={closestCorners} onDragEnd={onDragEnd}>
+    <DndContext
+      collisionDetection={closestCorners}
+      onDragEnd={onDragEnd}
+      sensors={sensors}
+    >
       <Box p={0}>
         <SimpleGrid cols={8} mb="xs" spacing="xs" visibleFrom="sm">
           {headers.map((name, index) => (
