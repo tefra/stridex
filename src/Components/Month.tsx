@@ -50,13 +50,13 @@ const Month: React.FC<Props> = ({ month, year }) => {
   }, [year, month]);
 
   const headers = [
-    dayjs().weekday(1).format("dddd"),
-    dayjs().weekday(2).format("dddd"),
-    dayjs().weekday(3).format("dddd"),
-    dayjs().weekday(4).format("dddd"),
-    dayjs().weekday(5).format("dddd"),
-    dayjs().weekday(6).format("dddd"),
-    dayjs().weekday(7).format("dddd"),
+    dayjs().isoWeekday(1).format("dddd"),
+    dayjs().isoWeekday(2).format("dddd"),
+    dayjs().isoWeekday(3).format("dddd"),
+    dayjs().isoWeekday(4).format("dddd"),
+    dayjs().isoWeekday(5).format("dddd"),
+    dayjs().isoWeekday(6).format("dddd"),
+    dayjs().isoWeekday(7).format("dddd"),
     t("week.summary"),
   ];
 
