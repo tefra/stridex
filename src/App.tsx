@@ -62,7 +62,7 @@ const App: React.FC = () => {
 
   return (
     <DatesProvider settings={{ locale }}>
-      <Container m={0} p={0} size="xl" strategy="block">
+      <Container fluid m={0} p={0}>
         <Group justify="space-between" m="sm" wrap="wrap">
           <Title>{t("app.title")}</Title>
           <Group align="center" gap="sm">
@@ -209,10 +209,10 @@ const App: React.FC = () => {
         </Group>
       </Container>
       <Divider my="md" />
-      <Container mt="md" p="sm" size="xl">
+      <Container fluid mt="md" p="sm">
         <Month month={currentDateTime.month()} year={currentDateTime.year()} />
       </Container>
-      <Container m={0} p="sm" size="xl">
+      <Container fluid m={0} p="sm">
         <Text c="dimmed" size="xs" ta="center">
           {t("footer.tagline")}{" "}
           <Anchor
