@@ -112,8 +112,6 @@ export const Editor: React.FC<EditorProps> = ({
                 <ActionIcon
                   color="red"
                   onClick={() => form.removeListItem("steps", index)}
-                  size="sm"
-                  variant="subtle"
                 >
                   <IconX size={16} />
                 </ActionIcon>
@@ -252,7 +250,7 @@ export const Editor: React.FC<EditorProps> = ({
       ))}
       <Button
         fullWidth
-        leftSection={<IconPlus size={14} />}
+        leftSection={<IconPlus size="16" />}
         onClick={addStep}
         variant="light"
       >
@@ -264,8 +262,8 @@ export const Editor: React.FC<EditorProps> = ({
         {...form.getInputProps(`description`)}
         rightSection={
           <Tooltip label={t("editor.generate")}>
-            <ActionIcon onClick={generateDescription} variant="subtle">
-              <IconWand size={16} />
+            <ActionIcon onClick={generateDescription}>
+              <IconWand size="16" />
             </ActionIcon>
           </Tooltip>
         }
@@ -275,7 +273,7 @@ export const Editor: React.FC<EditorProps> = ({
           {t("editor.cancel")}
         </Button>
         {workout.id ? (
-          <Button color="red" onClick={handleDelete} variant="filled">
+          <Button color="red" onClick={handleDelete}>
             {t("editor.delete")}
           </Button>
         ) : null}

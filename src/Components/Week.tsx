@@ -65,9 +65,6 @@ const Week: React.FC<Props> = ({ startDay, year, month }) => {
         />
       ))}
       <Paper
-        withBorder
-        p="sm"
-        radius="md"
         style={{
           display: "flex",
           flexDirection: "column",

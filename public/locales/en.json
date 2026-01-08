@@ -21,10 +21,9 @@
     "tagline": "Plan your strides ×"
   },
   "drive": {
-    "connect": "Synchronize with Google Drive",
-    "reauthenticate": "Session expired – Click to re-authenticate with Google Drive",
-    "selectFileOrFolder": "Authorized – Select a file or folder to sync with",
-    "synced": "Auto-sync enabled – Click to disconnect"
+    "signIn": "Sign-in with Google",
+    "signOut": "Sign-out",
+    "pickFileToSync": "Pick file to sync"
   },
   "day": {
     "addWorkout": "Add workout",

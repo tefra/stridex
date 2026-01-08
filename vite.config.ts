@@ -39,7 +39,6 @@ export default defineConfig({
             "i18next-browser-languagedetector",
             "i18next-http-backend",
           ],
-          dayjs: ["dayjs"],
           state: ["zustand", "zod", "mantine-form-zod-resolver"],
           icons: ["@tabler/icons-react"],
         },

@@ -13,6 +13,7 @@ import { GOOGLE_CLIENT_ID } from "@/config";
 
 import App from "./App";
 import "./i18n";
+import mantineTheme from "./theme";
 
 const root = document.getElementById("root");
 if (!root) {
@@ -21,7 +22,7 @@ if (!root) {
 
 createRoot(root).render(
   <React.StrictMode>
-    <MantineProvider defaultColorScheme="auto">
+    <MantineProvider defaultColorScheme="auto" theme={mantineTheme}>
       <ModalsProvider>
         <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
           <App />

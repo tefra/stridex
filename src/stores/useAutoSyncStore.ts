@@ -3,14 +3,24 @@ import { persist } from "zustand/middleware";
 
 import useWorkoutStore from "@/stores/useWorkoutStore";
 
+interface User {
+  picture: string;
+  name: string;
+  email: string;
+}
+
 interface DriveSyncState {
   authToken: string | null;
   fileId: string | null;
+  user: User | null;
   loading: boolean;
+  setUser: (user: User) => void;
   setAuthToken: (token: string | null) => void;
   setFileId: (id: string | null) => void;
   setLoading: (value: boolean) => void;
+  disconnect: () => void;
   createFile: (parent: string) => Promise<void>;
+  loadUser: () => void;
   loadFile: () => Promise<void>;
   updateFile: () => Promise<void>;
   validateToken: () => Promise<boolean>;
@@ -19,10 +29,13 @@ interface DriveSyncState {
 const useAutoSyncStore = create<DriveSyncState>()(
   persist(
     (set, get) => ({
+      user: null,
       authToken: null,
       fileId: null,
       loading: false,
       setLoading: (value: boolean) => set({ loading: value }),
+      disconnect: () => set({ user: null, authToken: null, fileId: null }),
+      setUser: (user: User) => set({ user }),
       setAuthToken: (token) => set({ authToken: token }),
       setFileId: (id) => set({ fileId: id }),
       createFile: async (parent) => {
@@ -55,6 +68,22 @@ const useAutoSyncStore = create<DriveSyncState>()(
           }
         } catch (error) {
           console.error("Create file failed:", error);
+        }
+      },
+      loadUser: async () => {
+        const { authToken, setUser } = get();
+        if (!authToken) return;
+        try {
+          const userRes = await fetch(
+            "https://www.googleapis.com/oauth2/v3/userinfo",
+            {
+              headers: { Authorization: `Bearer ${authToken}` },
+            }
+          );
+          const user: User = await userRes.json();
+          setUser(user);
+        } catch (error) {
+          console.error("Load user failed:", error);
         }
       },
       loadFile: async () => {

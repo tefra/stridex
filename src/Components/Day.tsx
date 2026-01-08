@@ -39,9 +39,6 @@ const Day: React.FC<Props> = ({ date, current }) => {
     <Paper
       key={key}
       ref={setNodeRef}
-      withBorder
-      p={7}
-      radius="md"
       style={{
         opacity: current ? 1 : 0.5,
         display: "flex",
@@ -53,7 +50,7 @@ const Day: React.FC<Props> = ({ date, current }) => {
     >
       <Group gap={0} justify="space-between">
         <Tooltip withArrow label={t("day.addWorkout")}>
-          <ActionIcon c="blue" size={16} variant="subtle">
+          <ActionIcon size="xs">
             <IconPlus
               onClick={() =>
                 openEditor(

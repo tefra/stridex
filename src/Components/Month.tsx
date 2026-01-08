@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 import {
   closestCorners,
@@ -9,7 +9,18 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { Box, SimpleGrid, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Box,
+  Button,
+  Group,
+  Popover,
+  SimpleGrid,
+  Text,
+  Tooltip,
+} from "@mantine/core";
+import { MonthPicker } from "@mantine/dates";
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import weekday from "dayjs/plugin/weekday";
@@ -20,21 +31,32 @@ import Week from "@/Components/Week";
 import useWorkoutStore from "@/stores/useWorkoutStore";
 
 import type { DragEndEvent } from "@dnd-kit/core";
+import type { Dayjs } from "dayjs";
 
 import type { Workout } from "@/schemas";
 
 dayjs.extend(weekday);
 dayjs.extend(isoWeek);
 
-interface Props {
-  month: number;
-  year: number;
-}
-
-const Month: React.FC<Props> = ({ month, year }) => {
-  const { t } = useTranslation();
+const Month: React.FC = () => {
+  const { i18n, t } = useTranslation();
+  const locale = i18n.resolvedLanguage ?? "en";
   const { saveWorkout, reorderWorkouts } = useWorkoutStore();
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+  const [currentDateTime, setCurrentDateTime] = useState<Dayjs>(dayjs());
+  const month = currentDateTime.month();
+  const year = currentDateTime.year();
+
+  const [monthPickerOpened, setMonthPickerOpened] = useState(false);
+  const goToPreviousMonth = () => {
+    setMonthPickerOpened(false);
+    setCurrentDateTime((prev) => prev.subtract(1, "month"));
+  };
+
+  const goToNextMonth = () => {
+    setMonthPickerOpened(false);
+    setCurrentDateTime((prev) => prev.add(1, "month"));
+  };
 
   const mondays = useMemo(() => {
     const startOfMonth = dayjs().year(year).month(month).startOf("month");
@@ -84,6 +106,55 @@ const Month: React.FC<Props> = ({ month, year }) => {
       sensors={sensors}
     >
       <Box p={0}>
+        <Popover
+          withArrow
+          onChange={setMonthPickerOpened}
+          opened={monthPickerOpened}
+          shadow="md"
+          width="auto"
+        >
+          <Popover.Target>
+            <Group gap={0} mx="auto" my="xl" w="fit-content">
+              <Tooltip
+                withArrow
+                label={t("nav.previousMonth")}
+                position="bottom"
+              >
+                <ActionIcon onClick={goToPreviousMonth}>
+                  <IconChevronLeft />
+                </ActionIcon>
+              </Tooltip>
+              <Button
+                color="gray"
+                onClick={() => setMonthPickerOpened((o) => !o)}
+                px={5}
+                size="compact-md"
+                variant="subtle"
+              >
+                {currentDateTime.locale(locale).format("MMMM YYYY")}
+              </Button>
+              <Tooltip withArrow label={t("nav.nextMonth")} position="bottom">
+                <ActionIcon onClick={goToNextMonth}>
+                  <IconChevronRight />
+                </ActionIcon>
+              </Tooltip>
+            </Group>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <MonthPicker
+              allowDeselect={false}
+              defaultDate={currentDateTime.toDate()}
+              value={currentDateTime.toDate()}
+              onChange={(value) => {
+                if (value) {
+                  setCurrentDateTime(dayjs(value));
+                  setMonthPickerOpened(false);
+                }
+              }}
+            />
+          </Popover.Dropdown>
+        </Popover>
+
         <SimpleGrid cols={8} mb="xs" spacing="xs" visibleFrom="sm">
           {headers.map((name, index) => (
             <Text
@@ -91,7 +162,6 @@ const Month: React.FC<Props> = ({ month, year }) => {
               c="dimmed"
               fw={index === 7 ? 700 : 600}
               pr={index === 7 ? "md" : 0}
-              size="sm"
               ta={index === 7 ? "right" : "center"}
             >
               {name}
