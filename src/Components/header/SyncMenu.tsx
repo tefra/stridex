@@ -85,7 +85,7 @@ const SyncMenu: React.FC = () => {
 
   return (
     <React.Fragment>
-      <Menu withArrow>
+      <Menu>
         <Menu.Target>
           <Indicator color={indicatorColor} offset={2}>
             <Avatar

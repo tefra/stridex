@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { Anchor, Container, Divider, Text } from "@mantine/core";
 import { DatesProvider } from "@mantine/dates";
@@ -11,8 +11,15 @@ import useAutoSync from "@/hooks/useAutoSync";
 
 const App: React.FC = () => {
   const { i18n, t } = useTranslation();
-  const locale = i18n.resolvedLanguage ?? "en";
-  dayjs.locale(locale);
+  const locale = useMemo(
+    () => i18n.resolvedLanguage ?? "en",
+    [i18n.resolvedLanguage]
+  );
+
+  useEffect(() => {
+    dayjs.locale(locale);
+  }, [locale]);
+
   useAutoSync();
 
   return (

@@ -8,7 +8,7 @@ const GithubLink: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <Tooltip withArrow label={t("github.viewSource")} position="bottom">
+    <Tooltip label={t("github.viewSource")} position="bottom">
       <ActionIcon
         component="a"
         href="https://github.com/tefra/stridex"

@@ -3,6 +3,7 @@ import React from "react";
 import { SortableContext } from "@dnd-kit/sortable";
 import { Stack } from "@mantine/core";
 import { IconZzz } from "@tabler/icons-react";
+import { useShallow } from "zustand/react/shallow";
 
 import WorkoutItem from "@/Components/Workout";
 import useWorkoutStore from "@/stores/useWorkoutStore";
@@ -12,7 +13,9 @@ interface WorkoutsProps {
 }
 
 const Workouts: React.FC<WorkoutsProps> = ({ date }) => {
-  const workouts = useWorkoutStore().getWorkouts(date);
+  const workouts = useWorkoutStore(
+    useShallow((state) => state.getWorkouts(date))
+  );
 
   return (
     <SortableContext items={workouts.map((workout) => workout.id)}>

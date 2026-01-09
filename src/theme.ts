@@ -78,6 +78,16 @@ const mantineTheme: MantineThemeOverride = createTheme({
         withArrow: true,
       },
     },
+    Popover: {
+      defaultProps: {
+        withArrow: true,
+      },
+    },
+    Menu: {
+      defaultProps: {
+        withArrow: true,
+      },
+    },
   },
   other: {
     style: "mantine",

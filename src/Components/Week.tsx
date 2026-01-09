@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { Group, Paper, SimpleGrid, Stack, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
@@ -17,43 +17,55 @@ interface Props {
 
 const Week: React.FC<Props> = ({ startDay, year, month }) => {
   const { t } = useTranslation();
-  const days = Array.from({ length: 7 }, (_, i) => startDay.add(i, "day"));
+  const days = useMemo(
+    () => Array.from({ length: 7 }, (_, i) => startDay.add(i, "day")),
+    [startDay]
+  );
   const stats = useStats(days);
-  const previousStartDay = startDay.subtract(1, "week");
-  const previousWeekDays = Array.from({ length: 7 }, (_, i) =>
-    previousStartDay.add(i, "day")
+  const previousWeekDays = useMemo(
+    () =>
+      Array.from({ length: 7 }, (_, i) =>
+        startDay.subtract(1, "week").add(i, "day")
+      ),
+    [startDay]
   );
   const previousStats = useStats(previousWeekDays);
-  const delta = calculatePercentDelta(stats.total, previousStats.total);
+  const delta = useMemo(
+    () => calculatePercentDelta(stats.total, previousStats.total),
+    [stats.total, previousStats.total]
+  );
 
-  const summaries = [
-    {
-      label: t("week.total"),
-      value: `${stats.total.toFixed(1)}km`,
-      color: "indigo",
-    },
-    {
-      label: t("week.easy"),
-      value: `${stats.easy.toFixed(1)}km`,
-      color: "teal",
-    },
-    {
-      label: t("week.hard"),
-      value: `${stats.hard.toFixed(1)}km`,
-      color: "orange",
-    },
-    {
-      label: t("week.ratio"),
-      value: `${stats.easyPercent.toFixed(0)}/${stats.hardPercent.toFixed(0)}`,
-      color: stats.easyPercent < 80 ? "yellow" : "green",
-    },
-    {
-      label: t("week.delta"),
-      value: delta === null ? t("week.na") : `${delta.toFixed(1)}%`,
-      color: delta === null || delta > 0 ? "lime" : "red",
-      badge: true,
-    },
-  ];
+  const summaries = useMemo(
+    () => [
+      {
+        label: t("week.total"),
+        value: `${stats.total.toFixed(1)}km`,
+        color: "indigo",
+      },
+      {
+        label: t("week.easy"),
+        value: `${stats.easy.toFixed(1)}km`,
+        color: "teal",
+      },
+      {
+        label: t("week.hard"),
+        value: `${stats.hard.toFixed(1)}km`,
+        color: "orange",
+      },
+      {
+        label: t("week.ratio"),
+        value: `${stats.easyPercent.toFixed(0)}/${stats.hardPercent.toFixed(0)}`,
+        color: stats.easyPercent < 80 ? "yellow" : "green",
+      },
+      {
+        label: t("week.delta"),
+        value: delta === null ? t("week.na") : `${delta.toFixed(1)}%`,
+        color: delta === null || delta > 0 ? "lime" : "red",
+        badge: true,
+      },
+    ],
+    [t, stats, delta]
+  );
 
   return (
     <SimpleGrid cols={{ base: 1, sm: 8 }} mb="lg" spacing="xs">

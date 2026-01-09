@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 
 import { useDroppable } from "@dnd-kit/core";
 import {
@@ -10,10 +10,11 @@ import {
   Tooltip,
   useMatches,
 } from "@mantine/core";
+import { modals } from "@mantine/modals";
 import { IconPlus } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 
-import { openEditor } from "@/Components/Editor";
+import Editor from "@/Components/Editor";
 import Workouts from "@/Components/Workouts";
 
 import type { Dayjs } from "dayjs";
@@ -34,6 +35,19 @@ const Day: React.FC<Props> = ({ date, current }) => {
     id: key,
     data: { type: "week" },
   });
+  const handleAddWorkout = useCallback(() => {
+    modals.open({
+      title: t("editor.titleNew", { date: key }),
+      size: "xl",
+      children: (
+        <Editor
+          date={key}
+          onComplete={() => modals.closeAll()}
+          workout={{ id: "", description: "", steps: [] }}
+        />
+      ),
+    });
+  }, [key, t]);
 
   return (
     <Paper
@@ -49,17 +63,9 @@ const Day: React.FC<Props> = ({ date, current }) => {
       }}
     >
       <Group gap={0} justify="space-between">
-        <Tooltip withArrow label={t("day.addWorkout")}>
+        <Tooltip label={t("day.addWorkout")}>
           <ActionIcon size="xs">
-            <IconPlus
-              onClick={() =>
-                openEditor(
-                  key,
-                  { id: "", description: "", steps: [] },
-                  t("editor.titleNew", { date: key })
-                )
-              }
-            />
+            <IconPlus onClick={handleAddWorkout} />
           </ActionIcon>
         </Tooltip>
         <Text c={isWeekend ? "red" : "default"} fw={700} size="md">
