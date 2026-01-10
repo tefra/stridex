@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 import {
   closestCorners,
@@ -46,17 +46,25 @@ const Month: React.FC = () => {
   const [currentDateTime, setCurrentDateTime] = useState<Dayjs>(dayjs());
   const month = currentDateTime.month();
   const year = currentDateTime.year();
-
+  const formattedMonthYear = currentDateTime.locale(locale).format("MMMM YYYY");
   const [monthPickerOpened, setMonthPickerOpened] = useState(false);
-  const goToPreviousMonth = () => {
-    setMonthPickerOpened(false);
-    setCurrentDateTime((prev) => prev.subtract(1, "month"));
-  };
 
-  const goToNextMonth = () => {
+  const goToPreviousMonth = useCallback(() => {
+    setCurrentDateTime((prev) => prev.subtract(1, "month"));
     setMonthPickerOpened(false);
+  }, []);
+
+  const goToNextMonth = useCallback(() => {
     setCurrentDateTime((prev) => prev.add(1, "month"));
-  };
+    setMonthPickerOpened(false);
+  }, []);
+
+  const handleMonthPickerChange = useCallback((value: string | null) => {
+    if (value) {
+      setCurrentDateTime(dayjs(value));
+      setMonthPickerOpened(false);
+    }
+  }, []);
 
   const mondays = useMemo(() => {
     const startOfMonth = dayjs().year(year).month(month).startOf("month");
@@ -71,33 +79,34 @@ const Month: React.FC = () => {
     return weekStarts;
   }, [year, month]);
 
-  const headers = [
-    dayjs().isoWeekday(1).format("dddd"),
-    dayjs().isoWeekday(2).format("dddd"),
-    dayjs().isoWeekday(3).format("dddd"),
-    dayjs().isoWeekday(4).format("dddd"),
-    dayjs().isoWeekday(5).format("dddd"),
-    dayjs().isoWeekday(6).format("dddd"),
-    dayjs().isoWeekday(7).format("dddd"),
-    t("week.summary"),
-  ];
+  const headers = useMemo(() => {
+    const days = [1, 2, 3, 4, 5, 6, 7].map((i) =>
+      dayjs().isoWeekday(i).locale(locale).format("dddd")
+    );
+    return [...days, t("week.summary")];
+  }, [locale, t]);
 
-  const onDragEnd = (event: DragEndEvent): void => {
-    const { active, over } = event;
-    if (!over || !active) return;
+  const onDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over || active.id === over.id) return;
 
-    const sourceWorkout = active.data.current?.workout as Workout;
-    const sourceDate = active.data.current?.date as string;
-    const sourceId = active.id as string;
-    const targetId = over.id as string;
-    const targetType = over.data.current?.type as string;
+      const sourceWorkout = active.data.current?.workout as Workout | undefined;
+      const sourceDate = active.data.current?.date as string | undefined;
+      const sourceId = active.id as string;
+      const targetId = over.id as string;
+      const targetType = over.data.current?.type as string | undefined;
 
-    if (targetType === "week") {
-      saveWorkout(targetId, { ...sourceWorkout, id: "" });
-    } else {
-      reorderWorkouts(sourceDate, sourceId, targetId);
-    }
-  };
+      if (!sourceWorkout || !sourceDate) return;
+
+      if (targetType === "week") {
+        saveWorkout(targetId, { ...sourceWorkout, id: "" });
+      } else {
+        reorderWorkouts(sourceDate, sourceId, targetId);
+      }
+    },
+    [saveWorkout, reorderWorkouts]
+  );
 
   return (
     <DndContext
@@ -131,9 +140,9 @@ const Month: React.FC = () => {
                 size="compact-md"
                 variant="subtle"
               >
-                {currentDateTime.locale(locale).format("MMMM YYYY")}
+                {formattedMonthYear}
               </Button>
-              <Tooltip withArrow label={t("nav.nextMonth")} position="bottom">
+              <Tooltip label={t("nav.nextMonth")} position="bottom">
                 <ActionIcon onClick={goToNextMonth}>
                   <IconChevronRight />
                 </ActionIcon>
@@ -144,13 +153,8 @@ const Month: React.FC = () => {
             <MonthPicker
               allowDeselect={false}
               defaultDate={currentDateTime.toDate()}
+              onChange={handleMonthPickerChange}
               value={currentDateTime.toDate()}
-              onChange={(value) => {
-                if (value) {
-                  setCurrentDateTime(dayjs(value));
-                  setMonthPickerOpened(false);
-                }
-              }}
             />
           </Popover.Dropdown>
         </Popover>
@@ -170,7 +174,7 @@ const Month: React.FC = () => {
         </SimpleGrid>
         {mondays.map((monday) => (
           <Week
-            key={monday.toISOString()}
+            key={monday.format("YYYY-MM-DD")}
             month={month}
             startDay={monday}
             year={year}

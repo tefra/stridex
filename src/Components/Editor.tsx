@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 
 import {
   ActionIcon,
@@ -18,7 +18,6 @@ import {
 } from "@mantine/core";
 import { TimePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
-import { modals } from "@mantine/modals";
 import { IconPlus, IconWand, IconX } from "@tabler/icons-react";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { useTranslation } from "react-i18next";
@@ -36,11 +35,7 @@ interface EditorProps {
   onComplete: () => void;
 }
 
-export const Editor: React.FC<EditorProps> = ({
-  date,
-  workout,
-  onComplete,
-}) => {
+const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
   const { t } = useTranslation();
   const { saveWorkout, deleteWorkout } = useWorkoutStore();
 
@@ -49,18 +44,6 @@ export const Editor: React.FC<EditorProps> = ({
     validate: zod4Resolver(WorkoutSchema),
     validateInputOnChange: true,
     validateInputOnBlur: true,
-    onValuesChange: (values) => {
-      values.steps.forEach((step, index) => {
-        if (step.repetitions === 1) {
-          form.setFieldValue(`steps.${index}.recoveryValue`, 0);
-          form.setFieldValue(`steps.${index}.recoveryUnit`, "sec");
-          form.setFieldValue(`steps.${index}.skipLastRecovery`, false);
-        }
-        if (step.recoveryValue === 0) {
-          form.setFieldValue(`steps.${index}.skipLastRecovery`, false);
-        }
-      });
-    },
   });
 
   const addStep = () => {
@@ -74,22 +57,22 @@ export const Editor: React.FC<EditorProps> = ({
     });
   };
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     if (!form.isValid()) return;
     saveWorkout(date, form.values);
     onComplete();
-  };
+  }, [date, saveWorkout, onComplete, form]);
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     deleteWorkout(date, workout.id);
     onComplete();
-  };
+  }, [date, workout.id, deleteWorkout, onComplete]);
 
-  const generateDescription = () => {
+  const generateDescription = useCallback(() => {
     const step = workoutMainStep(form.values);
     const description = stepShorthand(step, t, true, true);
     form.setFieldValue("description", description);
-  };
+  }, [form, t]);
 
   return (
     <Stack gap="sm">
@@ -145,7 +128,7 @@ export const Editor: React.FC<EditorProps> = ({
                 withDropdown
                 withSeconds
                 hoursStep={1}
-                minutesStep={5}
+                minutesStep={1}
                 secondsStep={5}
                 value={formatDurationDisplay(step.durationValue)}
                 onChange={(value) => {
@@ -184,6 +167,20 @@ export const Editor: React.FC<EditorProps> = ({
                 label={t("editor.reps")}
                 min={1}
                 {...form.getInputProps(`steps.${index}.repetitions`)}
+                onChange={(value) => {
+                  form
+                    .getInputProps(`steps.${index}.repetitions`)
+                    .onChange(value);
+
+                  if (value === 1) {
+                    form.setFieldValue(`steps.${index}.recoveryValue`, 0);
+                    form.setFieldValue(`steps.${index}.recoveryUnit`, "sec");
+                    form.setFieldValue(
+                      `steps.${index}.skipLastRecovery`,
+                      false
+                    );
+                  }
+                }}
               />
             </Group>
           </Stack>
@@ -211,7 +208,7 @@ export const Editor: React.FC<EditorProps> = ({
                   withDropdown
                   withSeconds
                   hoursStep={1}
-                  minutesStep={5}
+                  minutesStep={1}
                   secondsStep={5}
                   value={formatDurationDisplay(step.recoveryValue)}
                   onChange={(value) => {
@@ -225,6 +222,17 @@ export const Editor: React.FC<EditorProps> = ({
                     min={0.01}
                     step={1.0}
                     {...form.getInputProps(`steps.${index}.recoveryValue`)}
+                    onChange={(value) => {
+                      form
+                        .getInputProps(`steps.${index}.recoveryValue`)
+                        .onChange(value);
+                      if (value === 0) {
+                        form.setFieldValue(
+                          `steps.${index}.skipLastRecovery`,
+                          false
+                        );
+                      }
+                    }}
                   />
                   <Select
                     allowDeselect={false}
@@ -285,20 +293,4 @@ export const Editor: React.FC<EditorProps> = ({
   );
 };
 
-export const openEditor = (
-  date: string,
-  workout: Workout,
-  title: string
-): void => {
-  modals.open({
-    title,
-    size: "xl",
-    children: (
-      <Editor
-        date={date}
-        onComplete={() => modals.closeAll()}
-        workout={workout}
-      />
-    ),
-  });
-};
+export default Editor;

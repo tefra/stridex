@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 
+import { useShallow } from "zustand/react/shallow";
+
 import useWorkoutStore from "@/stores/useWorkoutStore";
 
 import type { Dayjs } from "dayjs";
@@ -13,7 +15,11 @@ interface Stats {
 }
 
 const useStats = (days: Dayjs[]): Stats => {
-  const { getWorkouts } = useWorkoutStore();
+  const workouts = useWorkoutStore(
+    useShallow((state) =>
+      days.flatMap((day) => state.getWorkouts(day.format("YYYY-MM-DD")) || [])
+    )
+  );
 
   return useMemo(() => {
     const easyPaces = new Set(["warmup", "easy", "base", "cooldown"]);
@@ -22,25 +28,21 @@ const useStats = (days: Dayjs[]): Stats => {
     let easy = 0;
     let hard = 0;
 
-    days.forEach((day) => {
-      const dateStr = day.format("YYYY-MM-DD");
-      const workouts = getWorkouts(dateStr);
-      workouts.forEach((workout) => {
-        workout.steps.forEach((step) => {
-          let distance = 0;
-          if (step.durationUnit === "km") {
-            distance = step.durationValue * step.repetitions;
-          } else if (step.durationUnit === "m") {
-            distance = (step.durationValue * step.repetitions) / 1000;
-          }
+    workouts.forEach((workout) => {
+      workout.steps.forEach((step) => {
+        let distance = 0;
+        if (step.durationUnit === "km") {
+          distance = step.durationValue * step.repetitions;
+        } else if (step.durationUnit === "m") {
+          distance = (step.durationValue * step.repetitions) / 1000;
+        }
 
-          total += distance;
-          if (easyPaces.has(step.pace)) {
-            easy += distance;
-          } else if (hardPaces.has(step.pace)) {
-            hard += distance;
-          }
-        });
+        total += distance;
+        if (easyPaces.has(step.pace)) {
+          easy += distance;
+        } else if (hardPaces.has(step.pace)) {
+          hard += distance;
+        }
       });
     });
 
@@ -54,7 +56,7 @@ const useStats = (days: Dayjs[]): Stats => {
       easyPercent,
       hardPercent,
     };
-  }, [days, getWorkouts]);
+  }, [workouts]);
 };
 
 export default useStats;

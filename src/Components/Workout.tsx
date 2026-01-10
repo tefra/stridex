@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Group, Text, Tooltip } from "@mantine/core";
+import { modals } from "@mantine/modals";
 import { IconGripVertical } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 
-import { openEditor } from "@/Components/Editor";
+import Editor from "@/Components/Editor";
 import { paceColors } from "@/schemas";
 import { workoutMainStep, workoutShorthand } from "@/utils/formatting";
 
@@ -20,7 +21,9 @@ interface Props {
 
 const WorkoutItem: React.FC<Props> = ({ date, workout, index }) => {
   const { t } = useTranslation();
-  const mainStep = workoutMainStep(workout);
+  const mainStep = useMemo(() => workoutMainStep(workout), [workout]);
+  const shorthand = useMemo(() => workoutShorthand(workout, t), [workout, t]);
+
   const {
     attributes,
     listeners,
@@ -32,6 +35,19 @@ const WorkoutItem: React.FC<Props> = ({ date, workout, index }) => {
     id: workout.id,
     data: { type: "workout", date, workout },
   });
+  const handleEdit = useCallback(() => {
+    modals.open({
+      title: t("editor.titleEdit", { date, index: index + 1 }),
+      size: "xl",
+      children: (
+        <Editor
+          date={date}
+          onComplete={() => modals.closeAll()}
+          workout={workout}
+        />
+      ),
+    });
+  }, [date, workout, t, index]);
 
   return (
     <Group
@@ -57,20 +73,14 @@ const WorkoutItem: React.FC<Props> = ({ date, workout, index }) => {
         {...listeners}
         {...attributes}
       />
-      <Tooltip label={workoutShorthand(workout, t)}>
+      <Tooltip label={shorthand}>
         <Text
           c={paceColors[mainStep.pace]}
           fw={700}
+          onClick={() => handleEdit()}
           size="sm"
           style={{ cursor: "pointer" }}
           truncate="end"
-          onClick={() =>
-            openEditor(
-              date,
-              workout,
-              t("editor.titleEdit", { date, index: index + 1 })
-            )
-          }
         >
           {workout.description}
         </Text>
