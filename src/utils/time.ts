@@ -13,10 +13,8 @@ export const formatDurationDisplay = (seconds: number): string => {
 
   const dur = dayjs.duration(seconds, "seconds");
   const hours = Math.floor(dur.asHours());
-  const minutes = dur.minutes();
-  const secs = dur.seconds();
+  const minutes = dur.minutes().toString().padStart(2, "0");
+  const secs = dur.seconds().toString().padStart(2, "0");
 
-  return `${hours}:${minutes.toString().padStart(2, "0")}:${secs
-    .toString()
-    .padStart(2, "0")}`;
+  return `${hours}:${minutes}:${secs}`;
 };

@@ -99,6 +99,10 @@
       "label": "Seconds",
       "abbr": "sec"
     },
+    "min": {
+      "label": "Minutes",
+      "abbr": "min"
+    },
     "km": {
       "label": "Kilometers",
       "abbr": "km"

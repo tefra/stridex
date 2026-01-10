@@ -10,20 +10,28 @@ export const stepShorthand = (
   useAbbreviations = false,
   skipRest = false
 ): string => {
+  const getDuration = (value: number, unit: string) => {
+    if (unit !== "sec") return `${value}${t(`units.${unit}.abbr`)}`;
+
+    if (value < 60) return `${value} ${t("units.sec.abbr")}`;
+
+    return `${Math.round(value / 60)} ${t("units.min.abbr")}`;
+  };
+
+  const dur = getDuration(step.durationValue, step.durationUnit);
   const pace = useAbbreviations
     ? t(`paces.${step.pace}.abbr`)
     : t(`paces.${step.pace}.label`);
 
-  const getUnit = (unitKey: string) => t(`units.${unitKey}.abbr`);
-
   if (step.repetitions === 1) {
-    return `${pace} ${step.durationValue}${getUnit(step.durationUnit)}`;
+    return `${pace} ${dur}`;
   }
 
-  let repStr = `${step.repetitions}×${step.durationValue}${getUnit(step.durationUnit)} @ ${pace}`;
+  let repStr = `${step.repetitions}×${dur} @ ${pace}`;
   if (!skipRest && step.recoveryValue && step.recoveryValue > 0) {
     const skip = step.skipLastRecovery ? t("formatting.skipLast") : "";
-    repStr += ` [${step.recoveryValue}${getUnit(step.recoveryUnit)}${skip}]`;
+    const durr = getDuration(step.recoveryValue, step.recoveryUnit);
+    repStr += ` [${durr}${skip}]`;
   }
   return repStr;
 };
