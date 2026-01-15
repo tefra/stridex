@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/stridex/",
+  base: "/",
   server: {
     host: true,
     port: 5173,
