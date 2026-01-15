@@ -17,7 +17,7 @@ i18n
       escapeValue: false,
     },
     backend: {
-      loadPath: "/stridex/locales/{{lng}}.json",
+      loadPath: "/locales/{{lng}}.json",
     },
   });
 
