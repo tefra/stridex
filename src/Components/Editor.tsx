@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 
 import {
   ActionIcon,
@@ -57,22 +57,22 @@ const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
     });
   };
 
-  const handleSave = useCallback(() => {
+  const handleSave = () => {
     if (!form.isValid()) return;
     saveWorkout(date, form.values);
     onComplete();
-  }, [date, saveWorkout, onComplete, form]);
+  };
 
-  const handleDelete = useCallback(() => {
+  const handleDelete = () => {
     deleteWorkout(date, workout.id);
     onComplete();
-  }, [date, workout.id, deleteWorkout, onComplete]);
+  };
 
-  const generateDescription = useCallback(() => {
+  const generateDescription = () => {
     const step = workoutMainStep(form.values);
     const description = stepShorthand(step, t, true, true);
     form.setFieldValue("description", description);
-  }, [form, t]);
+  };
 
   return (
     <Stack gap="sm">

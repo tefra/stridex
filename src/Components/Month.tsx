@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useState } from "react";
 
 import {
   closestCorners,
@@ -49,24 +49,24 @@ const Month: React.FC = () => {
   const formattedMonthYear = currentDateTime.locale(locale).format("MMMM YYYY");
   const [monthPickerOpened, setMonthPickerOpened] = useState(false);
 
-  const goToPreviousMonth = useCallback(() => {
+  const goToPreviousMonth = () => {
     setCurrentDateTime((prev) => prev.subtract(1, "month"));
     setMonthPickerOpened(false);
-  }, []);
+  };
 
-  const goToNextMonth = useCallback(() => {
+  const goToNextMonth = () => {
     setCurrentDateTime((prev) => prev.add(1, "month"));
     setMonthPickerOpened(false);
-  }, []);
+  };
 
-  const handleMonthPickerChange = useCallback((value: string | null) => {
+  const handleMonthPickerChange = (value: string | null) => {
     if (value) {
       setCurrentDateTime(dayjs(value));
       setMonthPickerOpened(false);
     }
-  }, []);
+  };
 
-  const mondays = useMemo(() => {
+  const mondays = (() => {
     const startOfMonth = dayjs().year(year).month(month).startOf("month");
     const endOfMonth = startOfMonth.endOf("month");
     let currentMonday = startOfMonth.startOf("isoWeek");
@@ -77,36 +77,33 @@ const Month: React.FC = () => {
       currentMonday = currentMonday.add(7, "day");
     }
     return weekStarts;
-  }, [year, month]);
+  })();
 
-  const headers = useMemo(() => {
+  const headers = (() => {
     const days = [1, 2, 3, 4, 5, 6, 7].map((i) =>
       dayjs().isoWeekday(i).locale(locale).format("dddd")
     );
     return [...days, t("week.summary")];
-  }, [locale, t]);
+  })();
 
-  const onDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event;
-      if (!over || active.id === over.id) return;
+  const onDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
 
-      const sourceWorkout = active.data.current?.workout as Workout | undefined;
-      const sourceDate = active.data.current?.date as string | undefined;
-      const sourceId = active.id as string;
-      const targetId = over.id as string;
-      const targetType = over.data.current?.type as string | undefined;
+    const sourceWorkout = active.data.current?.workout as Workout | undefined;
+    const sourceDate = active.data.current?.date as string | undefined;
+    const sourceId = active.id as string;
+    const targetId = over.id as string;
+    const targetType = over.data.current?.type as string | undefined;
 
-      if (!sourceWorkout || !sourceDate) return;
+    if (!sourceWorkout || !sourceDate) return;
 
-      if (targetType === "week") {
-        saveWorkout(targetId, { ...sourceWorkout, id: "" });
-      } else {
-        reorderWorkouts(sourceDate, sourceId, targetId);
-      }
-    },
-    [saveWorkout, reorderWorkouts]
-  );
+    if (targetType === "week") {
+      saveWorkout(targetId, { ...sourceWorkout, id: "" });
+    } else {
+      reorderWorkouts(sourceDate, sourceId, targetId);
+    }
+  };
 
   return (
     <DndContext

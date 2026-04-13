@@ -6,6 +6,7 @@ import { defineConfig } from "eslint/config";
 import { configs, plugins, rules } from "eslint-config-airbnb-extended";
 import { rules as prettierConfigRules } from "eslint-config-prettier";
 import prettierPlugin from "eslint-plugin-prettier";
+import reactCompiler from "eslint-plugin-react-compiler";
 
 const gitignorePath = path.resolve(".", ".gitignore");
 
@@ -76,6 +77,8 @@ export default defineConfig([
   ...reactConfig,
   // TypeScript config
   ...typescriptConfig,
+  // React Compiler
+  reactCompiler.configs.recommended,
   // Prettier config
   ...prettierConfig,
   {

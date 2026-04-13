@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 
 import { useDroppable } from "@dnd-kit/core";
 import {
@@ -35,7 +35,7 @@ const Day: React.FC<Props> = ({ date, current }) => {
     id: key,
     data: { type: "week" },
   });
-  const handleAddWorkout = useCallback(() => {
+  const handleAddWorkout = () => {
     modals.open({
       title: t("editor.titleNew", { date: key }),
       size: "xl",
@@ -47,7 +47,7 @@ const Day: React.FC<Props> = ({ date, current }) => {
         />
       ),
     });
-  }, [key, t]);
+  };
 
   return (
     <Paper

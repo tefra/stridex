@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React from "react";
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -21,8 +21,8 @@ interface Props {
 
 const WorkoutItem: React.FC<Props> = ({ date, workout, index }) => {
   const { t } = useTranslation();
-  const mainStep = useMemo(() => workoutMainStep(workout), [workout]);
-  const shorthand = useMemo(() => workoutShorthand(workout, t), [workout, t]);
+  const mainStep = workoutMainStep(workout);
+  const shorthand = workoutShorthand(workout, t);
 
   const {
     attributes,
@@ -35,7 +35,7 @@ const WorkoutItem: React.FC<Props> = ({ date, workout, index }) => {
     id: workout.id,
     data: { type: "workout", date, workout },
   });
-  const handleEdit = useCallback(() => {
+  const handleEdit = () => {
     modals.open({
       title: t("editor.titleEdit", { date, index: index + 1 }),
       size: "xl",
@@ -47,7 +47,7 @@ const WorkoutItem: React.FC<Props> = ({ date, workout, index }) => {
         />
       ),
     });
-  }, [date, workout, t, index]);
+  };
 
   return (
     <Group
