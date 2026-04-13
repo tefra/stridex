@@ -1,14 +1,14 @@
 import { fileURLToPath } from "node:url";
 
-import react from "@vitejs/plugin-react";
+import babel from "@rolldown/plugin-babel";
+import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
-    react({
-      babel: {
-        plugins: ["babel-plugin-react-compiler"],
-      },
+    react(),
+    babel({
+      presets: [reactCompilerPreset()],
     }),
   ],
   base: "/",
@@ -22,31 +22,24 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        manualChunks: {
-          vendor: ["react", "react-dom"],
-          mantine: [
-            "@mantine/core",
-            "@mantine/hooks",
-            "@mantine/dates",
-            "@mantine/form",
-            "@mantine/modals",
-          ],
-          dnd: ["@dnd-kit/core", "@dnd-kit/sortable", "@dnd-kit/utilities"],
-          google: [
-            "@react-oauth/google",
-            "@googleworkspace/drive-picker-react",
-            "@googleworkspace/drive-picker-element",
-          ],
-          i18n: [
-            "i18next",
-            "react-i18next",
-            "i18next-browser-languagedetector",
-            "i18next-http-backend",
-          ],
-          state: ["zustand", "zod"],
-          icons: ["@tabler/icons-react"],
+        manualChunks: (id) => {
+          if (!id.includes("node_modules")) return undefined;
+
+          if (/\/(react|react-dom)\//.test(id)) return "vendor";
+          if (id.includes("@mantine/")) return "mantine";
+          if (id.includes("@dnd-kit/")) return "dnd";
+          if (
+            id.includes("@react-oauth/google") ||
+            id.includes("@googleworkspace/")
+          )
+            return "google";
+          if (id.includes("i18next") || id.includes("react-i18next"))
+            return "i18n";
+          if (id.includes("/zustand/") || id.includes("/zod/")) return "state";
+          if (id.includes("@tabler/icons-react")) return "icons";
+          return undefined;
         },
       },
     },
