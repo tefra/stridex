@@ -17,9 +17,8 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { TimePicker } from "@mantine/dates";
-import { useForm } from "@mantine/form";
+import { schemaResolver, useForm } from "@mantine/form";
 import { IconPlus, IconWand, IconX } from "@tabler/icons-react";
-import { zod4Resolver } from "mantine-form-zod-resolver";
 import { useTranslation } from "react-i18next";
 
 import { StepSchema, WorkoutSchema } from "@/schemas";
@@ -41,7 +40,7 @@ const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
 
   const form = useForm({
     initialValues: structuredClone(workout),
-    validate: zod4Resolver(WorkoutSchema),
+    validate: schemaResolver(WorkoutSchema),
     validateInputOnChange: true,
     validateInputOnBlur: true,
   });
@@ -57,8 +56,9 @@ const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
     });
   };
 
-  const handleSave = () => {
-    if (!form.isValid()) return;
+  const handleSave = async () => {
+    const { hasErrors } = await form.validate();
+    if (hasErrors) return;
     saveWorkout(date, form.values);
     onComplete();
   };
@@ -184,7 +184,7 @@ const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
               />
             </Group>
           </Stack>
-          <Collapse in={step.repetitions > 1}>
+          <Collapse expanded={step.repetitions > 1}>
             <Stack gap="xs" mt="xl">
               <Title order={6}>{t("editor.recovery")}</Title>
               <SegmentedControl
@@ -285,9 +285,7 @@ const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
             {t("editor.delete")}
           </Button>
         ) : null}
-        <Button disabled={!form.isValid()} onClick={handleSave}>
-          {t("editor.save")}
-        </Button>
+        <Button onClick={handleSave}>{t("editor.save")}</Button>
       </Group>
     </Stack>
   );

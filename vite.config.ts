@@ -45,7 +45,7 @@ export default defineConfig({
             "i18next-browser-languagedetector",
             "i18next-http-backend",
           ],
-          state: ["zustand", "zod", "mantine-form-zod-resolver"],
+          state: ["zustand", "zod"],
           icons: ["@tabler/icons-react"],
         },
       },
