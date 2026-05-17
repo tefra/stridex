@@ -65,3 +65,16 @@ export const WorkoutSchema = z.object({
 
 export type Step = z.infer<typeof StepSchema>;
 export type Workout = z.infer<typeof WorkoutSchema>;
+
+export const easyPaces = new Set<Step["pace"]>([
+  "warmup",
+  "easy",
+  "base",
+  "cooldown",
+]);
+export const hardPaces = new Set<Step["pace"]>([
+  "tempo",
+  "subthreshold",
+  "threshold",
+  "sprint",
+]);

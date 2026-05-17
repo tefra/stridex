@@ -31,7 +31,6 @@ const ActiveWorkout: React.FC = () => {
         style={{
           cursor: "move",
           outline: "none",
-          marginRight: "1",
           opacity: "0.7",
           flexShrink: 0,
         }}

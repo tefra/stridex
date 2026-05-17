@@ -30,8 +30,8 @@ const LanguageSwitcher: React.FC = () => {
             <Menu.Item
               key={lng}
               c={isCurrent ? "blue" : undefined}
+              fw={isCurrent ? 600 : 400}
               onClick={() => changeLanguage(lng)}
-              style={{ fontWeight: isCurrent ? 600 : 400 }}
             >
               {lng.toUpperCase()}
             </Menu.Item>

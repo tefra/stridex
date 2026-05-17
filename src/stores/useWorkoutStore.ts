@@ -15,7 +15,6 @@ interface WorkoutState {
 }
 
 interface WorkoutActions {
-  getWorkout: (date: string, id: string) => Workout | undefined;
   getWorkouts: (date: string) => Workout[];
   saveWorkout: (date: string, workout: Workout) => void;
   deleteWorkout: (date: string, id: string) => void;
@@ -29,8 +28,6 @@ const useWorkoutStore = create<WorkoutStore>()(
     immer(
       subscribeWithSelector((set, get) => ({
         workouts: {},
-        getWorkout: (date: string, id: string) =>
-          get().workouts[date]?.find((w) => w.id === id),
         getWorkouts: (date) => get().workouts[date] || [],
         saveWorkout: (date: string, data: Workout) => {
           set((draft) => {

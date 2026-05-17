@@ -82,12 +82,7 @@ const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
           key={index}
           radius="sm"
           legend={
-            <Group
-              gap="xs"
-              justify="space-between"
-              style={{ width: "100%" }}
-              wrap="nowrap"
-            >
+            <Group gap="xs" justify="space-between" w="100%" wrap="nowrap">
               <Text fw={500} size="sm">
                 {t("editor.stepLegend", { number: index + 1 })}
               </Text>
@@ -125,11 +120,8 @@ const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
             {step.durationUnit === "sec" ? (
               <TimePicker
                 clearable
-                withDropdown
                 withSeconds
-                hoursStep={1}
-                minutesStep={1}
-                secondsStep={5}
+                type="duration"
                 value={formatDurationDisplay(step.durationValue)}
                 onChange={(value) => {
                   const seconds = parseDurationInput(value);
@@ -205,11 +197,8 @@ const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
               {step.recoveryUnit === "sec" ? (
                 <TimePicker
                   clearable
-                  withDropdown
                   withSeconds
-                  hoursStep={1}
-                  minutesStep={1}
-                  secondsStep={5}
+                  type="duration"
                   value={formatDurationDisplay(step.recoveryValue)}
                   onChange={(value) => {
                     const seconds = parseDurationInput(value);

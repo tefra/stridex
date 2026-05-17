@@ -20,6 +20,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { MonthPicker } from "@mantine/dates";
+import { useDisclosure } from "@mantine/hooks";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
@@ -47,22 +48,22 @@ const Month: React.FC = () => {
   const month = currentDateTime.month();
   const year = currentDateTime.year();
   const formattedMonthYear = currentDateTime.locale(locale).format("MMMM YYYY");
-  const [monthPickerOpened, setMonthPickerOpened] = useState(false);
+  const [monthPickerOpened, monthPicker] = useDisclosure(false);
 
   const goToPreviousMonth = () => {
     setCurrentDateTime((prev) => prev.subtract(1, "month"));
-    setMonthPickerOpened(false);
+    monthPicker.close();
   };
 
   const goToNextMonth = () => {
     setCurrentDateTime((prev) => prev.add(1, "month"));
-    setMonthPickerOpened(false);
+    monthPicker.close();
   };
 
   const handleMonthPickerChange = (value: string | null) => {
     if (value) {
       setCurrentDateTime(dayjs(value));
-      setMonthPickerOpened(false);
+      monthPicker.close();
     }
   };
 
@@ -114,7 +115,7 @@ const Month: React.FC = () => {
       <Box p={0}>
         <Popover
           withArrow
-          onChange={setMonthPickerOpened}
+          onChange={(v) => (v ? monthPicker.open() : monthPicker.close())}
           opened={monthPickerOpened}
           shadow="md"
           width="auto"
@@ -132,7 +133,7 @@ const Month: React.FC = () => {
               </Tooltip>
               <Button
                 color="gray"
-                onClick={() => setMonthPickerOpened((o) => !o)}
+                onClick={monthPicker.toggle}
                 px={5}
                 size="compact-md"
                 variant="subtle"

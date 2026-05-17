@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { Avatar, Indicator, Menu } from "@mantine/core";
+import { useDisclosure, useInterval } from "@mantine/hooks";
 import { useGoogleLogin } from "@react-oauth/google";
 import {
   IconFolderOpen,
@@ -15,7 +16,8 @@ import useAutoSyncStore from "@/stores/useAutoSyncStore";
 
 const SyncMenu: React.FC = () => {
   const { t } = useTranslation();
-  const [pickerOpened, setPickerOpened] = useState(false);
+  const [pickerOpened, { open: openPicker, close: closePicker }] =
+    useDisclosure(false);
   const {
     user,
     setAuthToken,
@@ -33,21 +35,18 @@ const SyncMenu: React.FC = () => {
       setAuthToken(response.access_token);
       loadUser();
       if (!fileId) {
-        setPickerOpened(true);
+        openPicker();
       }
     },
   });
 
+  const interval = useInterval(validateToken, 10 * 60 * 1000);
   useEffect(() => {
-    if (!authToken) return;
-
+    if (!authToken) return undefined;
     validateToken();
-    const interval = setInterval(validateToken, 10 * 60 * 1000);
-    // eslint-disable-next-line consistent-return
-    return () => {
-      clearInterval(interval);
-    };
-  }, [authToken, fileId, validateToken]);
+    interval.start();
+    return interval.stop;
+  }, [authToken, fileId, validateToken, interval]);
 
   const hasToken = !!authToken;
   const hasFile = !!fileId;
@@ -63,7 +62,7 @@ const SyncMenu: React.FC = () => {
       enabled: !hasToken && !hasFile,
     },
     {
-      key: "drive.signIn",
+      key: "drive.refresh",
       enabled: !hasToken && hasFile,
       leftSection: <IconRefresh />,
       onClick: () => login(),
@@ -72,7 +71,7 @@ const SyncMenu: React.FC = () => {
       key: "drive.pickFileToSync",
       enabled: hasToken && !hasFile,
       leftSection: <IconFolderOpen />,
-      onClick: () => setPickerOpened(true),
+      onClick: openPicker,
     },
     {
       key: "drive.signOut",
@@ -108,9 +107,7 @@ const SyncMenu: React.FC = () => {
             ))}
         </Menu.Dropdown>
       </Menu>
-      {pickerOpened ? (
-        <GoogleDrivePicker onClose={() => setPickerOpened(false)} />
-      ) : null}
+      {pickerOpened ? <GoogleDrivePicker onClose={closePicker} /> : null}
     </React.Fragment>
   );
 };

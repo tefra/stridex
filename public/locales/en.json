@@ -22,6 +22,7 @@
   },
   "drive": {
     "signIn": "Sign-in with Google",
+    "refresh": "Refresh sign-in",
     "signOut": "Sign-out",
     "pickFileToSync": "Pick file to sync"
   },

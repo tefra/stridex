@@ -1,5 +1,6 @@
 import { useShallow } from "zustand/react/shallow";
 
+import { easyPaces, hardPaces } from "@/schemas";
 import useWorkoutStore from "@/stores/useWorkoutStore";
 
 import type { Dayjs } from "dayjs";
@@ -19,8 +20,6 @@ const useStats = (days: Dayjs[]): Stats => {
     )
   );
 
-  const easyPaces = new Set(["warmup", "easy", "base", "cooldown"]);
-  const hardPaces = new Set(["tempo", "subthreshold", "threshold", "sprint"]);
   let total = 0;
   let easy = 0;
   let hard = 0;
