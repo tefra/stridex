@@ -20,7 +20,7 @@ interface DriveSyncState {
   setLoading: (value: boolean) => void;
   disconnect: () => void;
   createFile: (parent: string) => Promise<void>;
-  loadUser: () => void;
+  loadUser: () => Promise<void>;
   loadFile: () => Promise<void>;
   updateFile: () => Promise<void>;
   validateToken: () => Promise<boolean>;

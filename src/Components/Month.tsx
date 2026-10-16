@@ -42,7 +42,8 @@ dayjs.extend(isoWeek);
 const Month: React.FC = () => {
   const { i18n, t } = useTranslation();
   const locale = i18n.resolvedLanguage ?? "en";
-  const { saveWorkout, reorderWorkouts } = useWorkoutStore();
+  const saveWorkout = useWorkoutStore((state) => state.saveWorkout);
+  const reorderWorkouts = useWorkoutStore((state) => state.reorderWorkouts);
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
   const [currentDateTime, setCurrentDateTime] = useState<Dayjs>(dayjs());
   const month = currentDateTime.month();
@@ -114,7 +115,6 @@ const Month: React.FC = () => {
     >
       <Box p={0}>
         <Popover
-          withArrow
           onChange={(v) => (v ? monthPicker.open() : monthPicker.close())}
           opened={monthPickerOpened}
           shadow="md"
@@ -122,11 +122,7 @@ const Month: React.FC = () => {
         >
           <Popover.Target>
             <Group gap={0} mx="auto" my="xl" w="fit-content">
-              <Tooltip
-                withArrow
-                label={t("nav.previousMonth")}
-                position="bottom"
-              >
+              <Tooltip label={t("nav.previousMonth")} position="bottom">
                 <ActionIcon onClick={goToPreviousMonth}>
                   <IconChevronLeft />
                 </ActionIcon>

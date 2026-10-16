@@ -12,6 +12,11 @@ const CONTAINER_SIZES: Record<string, string> = {
   xxl: rem("1600px"),
 };
 
+const containerSize = (size: string | number | undefined) =>
+  typeof size === "string" && size in CONTAINER_SIZES
+    ? CONTAINER_SIZES[size]
+    : rem(size);
+
 const mantineTheme: MantineThemeOverride = createTheme({
   fontSizes: {
     xs: rem("12px"),
@@ -39,12 +44,7 @@ const mantineTheme: MantineThemeOverride = createTheme({
     Container: Container.extend({
       vars: (_, { size, fluid }) => ({
         root: {
-          // eslint-disable-next-line no-nested-ternary
-          "--container-size": fluid
-            ? "100%"
-            : size !== undefined && size in CONTAINER_SIZES
-              ? CONTAINER_SIZES[size]
-              : rem(size),
+          "--container-size": fluid ? "100%" : containerSize(size),
         },
       }),
     }),
