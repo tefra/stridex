@@ -51,7 +51,6 @@ const Day: React.FC<Props> = ({ date, current }) => {
 
   return (
     <Paper
-      key={key}
       ref={setNodeRef}
       style={{
         opacity: current ? 1 : 0.5,
@@ -64,8 +63,8 @@ const Day: React.FC<Props> = ({ date, current }) => {
     >
       <Group gap={0} justify="space-between">
         <Tooltip label={t("day.addWorkout")}>
-          <ActionIcon size="xs">
-            <IconPlus onClick={handleAddWorkout} />
+          <ActionIcon onClick={handleAddWorkout} size="xs">
+            <IconPlus />
           </ActionIcon>
         </Tooltip>
         <Text c={isWeekend ? "red" : "default"} fw={700} size="md">

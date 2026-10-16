@@ -20,6 +20,7 @@ import { TimePicker } from "@mantine/dates";
 import { schemaResolver, useForm } from "@mantine/form";
 import { IconPlus, IconWand, IconX } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
+import { v7 as uuid7 } from "uuid";
 
 import { StepSchema, WorkoutSchema } from "@/schemas";
 import useWorkoutStore from "@/stores/useWorkoutStore";
@@ -36,10 +37,14 @@ interface EditorProps {
 
 const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
   const { t } = useTranslation();
-  const { saveWorkout, deleteWorkout } = useWorkoutStore();
+  const saveWorkout = useWorkoutStore((state) => state.saveWorkout);
+  const deleteWorkout = useWorkoutStore((state) => state.deleteWorkout);
 
   const form = useForm({
-    initialValues: structuredClone(workout),
+    initialValues: {
+      ...structuredClone(workout),
+      steps: workout.steps.map((step) => ({ ...step, key: uuid7() })),
+    },
     validate: schemaResolver(WorkoutSchema),
     validateInputOnChange: true,
     validateInputOnBlur: true,
@@ -47,6 +52,7 @@ const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
 
   const addStep = () => {
     form.insertListItem("steps", {
+      key: uuid7(),
       pace: "easy",
       durationValue: 5,
       durationUnit: "km",
@@ -78,8 +84,7 @@ const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
     <Stack gap="sm">
       {form.values.steps.map((step, index) => (
         <Fieldset
-          // eslint-disable-next-line react/no-array-index-key
-          key={index}
+          key={step.key}
           radius="sm"
           legend={
             <Group gap="xs" justify="space-between" w="100%" wrap="nowrap">
@@ -124,7 +129,7 @@ const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
                 type="duration"
                 value={formatDurationDisplay(step.durationValue)}
                 onChange={(value) => {
-                  const seconds = parseDurationInput(value);
+                  const seconds = value ? parseDurationInput(value) : 0;
                   form.setFieldValue(`steps.${index}.durationValue`, seconds);
                 }}
               />
@@ -201,7 +206,7 @@ const Editor: React.FC<EditorProps> = ({ date, workout, onComplete }) => {
                   type="duration"
                   value={formatDurationDisplay(step.recoveryValue)}
                   onChange={(value) => {
-                    const seconds = parseDurationInput(value);
+                    const seconds = value ? parseDurationInput(value) : 0;
                     form.setFieldValue(`steps.${index}.recoveryValue`, seconds);
                   }}
                 />

@@ -76,8 +76,7 @@ const useWorkoutStore = create<WorkoutStore>()(
       name: "stridex-workouts",
       storage: createJSONStorage(() => ({
         getItem: async (name) => {
-          const val = await iget(name);
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          const val = await iget<string>(name);
           return val ?? null;
         },
         setItem: async (name, value) => {

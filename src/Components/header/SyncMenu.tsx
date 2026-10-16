@@ -10,6 +10,7 @@ import {
   IconRefresh,
 } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
+import { useShallow } from "zustand/react/shallow";
 
 import GoogleDrivePicker from "@/Components/GoogleDrivePicker";
 import useAutoSyncStore from "@/stores/useAutoSyncStore";
@@ -26,33 +27,46 @@ const SyncMenu: React.FC = () => {
     fileId,
     disconnect,
     validateToken,
-  } = useAutoSyncStore();
+  } = useAutoSyncStore(
+    useShallow((state) => ({
+      user: state.user,
+      setAuthToken: state.setAuthToken,
+      authToken: state.authToken,
+      loadUser: state.loadUser,
+      fileId: state.fileId,
+      disconnect: state.disconnect,
+      validateToken: state.validateToken,
+    }))
+  );
   const login = useGoogleLogin({
     scope: "https://www.googleapis.com/auth/drive.file",
     include_granted_scopes: false,
     prompt: "",
     onSuccess: async (response) => {
       setAuthToken(response.access_token);
-      loadUser();
+      await loadUser();
       if (!fileId) {
         openPicker();
       }
     },
   });
 
-  const interval = useInterval(validateToken, 10 * 60 * 1000);
+  const { start: startInterval, stop: stopInterval } = useInterval(
+    validateToken,
+    10 * 60 * 1000
+  );
   useEffect(() => {
     if (!authToken) return undefined;
     validateToken();
-    interval.start();
-    return interval.stop;
-  }, [authToken, fileId, validateToken, interval]);
+    startInterval();
+    return stopInterval;
+  }, [authToken, validateToken, startInterval, stopInterval]);
 
   const hasToken = !!authToken;
   const hasFile = !!fileId;
-  const indicatorColor =
-    // eslint-disable-next-line no-nested-ternary
-    !hasToken && !hasFile ? "gray" : hasToken && hasFile ? "green" : "yellow";
+  let indicatorColor = "yellow";
+  if (hasToken && hasFile) indicatorColor = "green";
+  else if (!hasToken && !hasFile) indicatorColor = "gray";
 
   const menuItems = [
     {
@@ -88,6 +102,7 @@ const SyncMenu: React.FC = () => {
         <Menu.Target>
           <Indicator color={indicatorColor} offset={2}>
             <Avatar
+              imageProps={{ referrerPolicy: "no-referrer" }}
               src={user ? user.picture : null}
               style={{ cursor: "pointer" }}
             />

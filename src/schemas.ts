@@ -22,7 +22,7 @@ export const paceIntensityOrder = [
   "warmup",
 ] as const;
 
-export const durations = ["sec", "km", "m"];
+const durations = ["sec", "km", "m"] as const;
 
 export const paceColors = {
   warmup: "blue.6",
@@ -35,27 +35,16 @@ export const paceColors = {
   cooldown: "indigo.6",
 } as const;
 
-export const StepSchema = z
-  .object({
-    pace: z.enum(paces),
-    durationValue: z.number().positive(),
-    durationUnit: z.enum(durations),
-    repetitions: z.number().int().min(1),
-    recoveryValue: z.number().min(0),
-    recoveryUnit: z.enum(durations),
-    skipLastRecovery: z.boolean().optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.recoveryValue != null && data.recoveryValue > 0) {
-        return data.recoveryUnit != null;
-      }
-      return true;
-    },
-    {
-      path: ["recoveryUnit"],
-    }
-  );
+export const StepSchema = z.object({
+  key: z.string().optional(),
+  pace: z.enum(paces),
+  durationValue: z.number().positive(),
+  durationUnit: z.enum(durations),
+  repetitions: z.int().min(1),
+  recoveryValue: z.number().min(0),
+  recoveryUnit: z.enum(durations),
+  skipLastRecovery: z.boolean().optional(),
+});
 
 export const WorkoutSchema = z.object({
   id: z.string(),

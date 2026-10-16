@@ -16,7 +16,7 @@ interface Stats {
 const useStats = (days: Dayjs[]): Stats => {
   const workouts = useWorkoutStore(
     useShallow((state) =>
-      days.flatMap((day) => state.getWorkouts(day.format("YYYY-MM-DD")) || [])
+      days.flatMap((day) => state.getWorkouts(day.format("YYYY-MM-DD")))
     )
   );
 

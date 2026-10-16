@@ -4,6 +4,7 @@ import {
   DrivePicker,
   DrivePickerDocsView,
 } from "@googleworkspace/drive-picker-react";
+import { useShallow } from "zustand/react/shallow";
 
 import { GOOGLE_APP_ID, GOOGLE_CLIENT_ID } from "@/config";
 import useAutoSyncStore from "@/stores/useAutoSyncStore";
@@ -13,7 +14,14 @@ interface Props {
 }
 
 const GoogleDrivePicker: React.FC<Props> = ({ onClose }) => {
-  const { authToken, setAuthToken, setFileId, createFile } = useAutoSyncStore();
+  const { authToken, setAuthToken, setFileId, createFile } = useAutoSyncStore(
+    useShallow((state) => ({
+      authToken: state.authToken,
+      setAuthToken: state.setAuthToken,
+      setFileId: state.setFileId,
+      createFile: state.createFile,
+    }))
+  );
 
   const handlePicked = async (e: CustomEvent) => {
     const { docs } = e.detail;
